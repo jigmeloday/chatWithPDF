@@ -33,7 +33,7 @@
           "error",
           "always"
         ],
-
+        "@typescript-eslint/no-explicit-any": "error",
         "quotes": [
           "error",
           "single",
