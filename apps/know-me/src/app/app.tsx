@@ -1,10 +1,9 @@
-import NxWelcome from './nx-welcome';
+import { Login } from '@know-me/auth-component';
 
 export function App(): JSX.Element {
   return (
     <>
-      <NxWelcome title="know-me" />
-      <div />
+      <Login />
     </>
   );
 }
