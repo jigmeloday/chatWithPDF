@@ -1,6 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import persistStore from 'redux-persist/es/persistStore';
-import { PersistConfig, Persistor, persistReducer } from 'redux-persist';
+import persistStore  from 'redux-persist/es/persistStore';
+import { Persistor, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 interface Reducer {
