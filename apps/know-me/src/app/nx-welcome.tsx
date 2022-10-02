@@ -7,9 +7,9 @@
  */
 export function NxWelcome({ title }: { title: string }): JSX.Element {
   return (
-    <>
+    <div >
       hello
-    </>
+    </div>
   );
 }
 
