@@ -4,7 +4,8 @@ on:
     branches: [ '**' ]
 jobs:
   install-deps:
-    runs-on: [self-hosted, do]
+
+    runs-on: [self-hosted]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
