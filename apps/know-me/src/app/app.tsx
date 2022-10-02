@@ -1,11 +1,13 @@
-import { Login } from '@know-me/auth-component';
+import { store } from '../store/store';
+import { Provider } from 'react-redux';
+import CoreRoute from './main/core-route/core-route';
 
 export function App(): JSX.Element {
   return (
-    <>
-      <Login />
-    </>
-  );
+    <Provider store={store}>
+      <CoreRoute />
+    </Provider>
+    );
 }
 
 export default App;
