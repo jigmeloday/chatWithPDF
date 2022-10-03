@@ -1,12 +1,18 @@
-import { store } from '../store/store';
-import { Provider } from 'react-redux';
+import { useSelector } from 'react-redux';
 import CoreRoute from './main/core-route/core-route';
+import { PaletteMode, ThemeProvider } from '@mui/material';
+import { theme }  from '../assets/theme/theme';
+import { AppWrapper } from './main/shared/style/shared.style';
+import { selectCurrentTheme } from '@know-me/shared';
 
 export function App(): JSX.Element {
+  const currentTheme = useSelector(selectCurrentTheme);
   return (
-    <Provider store={store}>
-      <CoreRoute />
-    </Provider>
+      <ThemeProvider theme={theme(currentTheme as PaletteMode)} >
+         <AppWrapper >
+           <CoreRoute />
+         </AppWrapper>
+      </ThemeProvider>
     );
 }
 

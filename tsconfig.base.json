@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@know-me/auth-component": ["libs/auth-component/src/index.ts"]
+      "@know-me/auth-component": ["libs/auth-component/src/index.ts"],
+      "@know-me/shared": ["libs/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

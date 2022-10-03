@@ -22,15 +22,15 @@ function CoreRoute():JSX.Element {
   ];
 
   return (
-    <Suspense fallback='loading...'>
-      <Routes>
-        {
-          (isAuthenticated ? AUTHENTICATED_ROUTE : UNAUTHENTICATED_ROUTE).map(({ id, path, component }) =>
-            <Route key={`${path}+${id}`} path={path} element={component} />
-          )
-        }
-      </Routes>
-    </Suspense>
+      <Suspense fallback='loading...'>
+        <Routes>
+          {
+            (isAuthenticated ? AUTHENTICATED_ROUTE : UNAUTHENTICATED_ROUTE).map(({ id, path, component }) =>
+              <Route key={`${path}+${id}`} path={path} element={component} />
+            )
+          }
+        </Routes>
+      </Suspense>
   );
 }
 
