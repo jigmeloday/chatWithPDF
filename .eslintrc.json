@@ -24,7 +24,25 @@
     {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nrwl/nx/typescript"],
-      "rules": {}
+      "rules": {
+        "max-lines": ["error", { "max": 200 }],
+        "max-len": [2, { "code": 120, "ignoreTrailingComments": true, "ignoreComments": true, "ignoreUrls": true }],
+        "@typescript-eslint/explicit-function-return-type": "error",
+        "no-console": 2,
+        "@typescript-eslint/object-curly-spacing": [
+          "error",
+          "always"
+        ],
+        "@typescript-eslint/no-explicit-any": "error",
+        "quotes": [
+          "error",
+          "single",
+          {
+            "avoidEscape": true
+          }
+        ],
+        "semi": "error"
+      }
     },
     {
       "files": ["*.js", "*.jsx"],

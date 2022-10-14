@@ -5,15 +5,35 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "lint": "nx lint",
+    "lint:fix": "nx lint --fix",
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "@mui/icons-material": "^5.10.6",
+    "@mui/material": "^5.10.7",
+    "@mui/styled-engine-sc": "^5.10.6",
+    "@reduxjs/toolkit": "^1.8.5",
     "core-js": "^3.6.5",
+    "formik": "^2.2.9",
+    "i18next": "^21.9.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-i18next": "^11.18.6",
+    "react-redux": "^8.0.4",
+    "react-router-dom": "^6.4.1",
+    "redux": "^4.2.0",
+    "redux-persist": "^6.0.0",
     "regenerator-runtime": "0.13.7",
-    "tslib": "^2.3.0"
+    "styled-components": "^5.3.6",
+    "tslib": "^2.3.0",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@nrwl/cli": "14.8.2",
@@ -41,6 +61,7 @@
     "eslint-plugin-jsx-a11y": "6.6.1",
     "eslint-plugin-react": "7.31.8",
     "eslint-plugin-react-hooks": "4.6.0",
+    "husky": "^8.0.0",
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
     "nx": "14.8.2",

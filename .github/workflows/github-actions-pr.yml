@@ -1,0 +1,25 @@
+name: PR-action
+on:
+  pull_request:
+    branches: [ '**' ]
+jobs:
+  install-deps:
+
+    runs-on: [self-hosted]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{runner.os}}-modules-${{hashFiles('**/yarn.lock')}}
+      - uses: actions/setup-node@v2.5.1
+        with:
+          node-version: 12.x
+
+      - run: |
+          node ./scripts/registry_setup.js
+
+      - name: Install Dependencies & Lint
+        run: |
+          yarn install --frozen-lockfile
+          yarn affected:lint --parallel=true --all
