@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
-import { Suspense } from 'react';
-import Login from './login/login';
+import { lazy, Suspense } from 'react';
+
+const Login = lazy(() => import( '../auth/login/login' ));
 
 export function Auth(): JSX.Element {
   return (
