@@ -3,7 +3,7 @@ import styles from './login.module.scss';
 /* eslint-disable-next-line */
 export interface LoginProps {}
 
-export function Login(props: LoginProps) {
+export function LoginComponent(props: LoginProps): JSX.Element {
   return (
     <div className={styles['container']}>
       <h1>Welcome to Login!</h1>
@@ -11,4 +11,4 @@ export function Login(props: LoginProps) {
   );
 }
 
-export default Login;
+export default LoginComponent;

@@ -1,13 +1,19 @@
-import styles from './auth.module.scss';
+import { Route, Routes } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 
-/* eslint-disable-next-line */
-export interface AuthProps {}
-
-export function Auth(props: AuthProps): JSX.Element {
+const Login = lazy(() => import( '../auth/login/login' ));
+const SignUp = lazy(() => import('../auth/sign-up/sign-up'));
+const PageNotFound = lazy( () => import('../page-not-found/page-not-found') );
+export function Auth(): JSX.Element {
   return (
-    <div className={styles['container']}>
-      <h1>Welcome to Auth!</h1>
-    </div>
+    <Suspense fallback='loading...'>
+      <Routes>
+        <Route path='/' element={<Login />} />
+        <Route path='/sign-up' element={<SignUp />} />
+        <Route path='/forgot-password' element={<Login />} />
+        <Route path='*' element={<PageNotFound />} />
+      </Routes>
+    </Suspense>
   );
 }
 
