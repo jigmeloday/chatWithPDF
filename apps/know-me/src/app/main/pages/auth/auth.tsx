@@ -1,13 +1,17 @@
-import styles from './auth.module.scss';
+import { Route, Routes } from 'react-router-dom';
+import { Suspense } from 'react';
+import Login from './login/login';
 
-/* eslint-disable-next-line */
-export interface AuthProps {}
-
-export function Auth(props: AuthProps): JSX.Element {
+export function Auth(): JSX.Element {
   return (
-    <div className={styles['container']}>
-      <h1>Welcome to Auth!</h1>
-    </div>
+    <Suspense fallback='loading...'>
+      <Routes>
+        <Route path='/' element={<Login />} />
+        <Route path='/sign-up' element={<Login />} />
+        <Route path='/forgot-password' element={<Login />} />
+        <Route path='*' element={<>page not found</>} />
+      </Routes>
+    </Suspense>
   );
 }
 

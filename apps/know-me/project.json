@@ -22,6 +22,28 @@
         "webpackConfig": "@nrwl/react/plugins/webpack"
       },
       "configurations": {
+        "stg": {
+          "fileReplacements": [
+            {
+              "replace": "apps/know-me/src/environments/environment.ts",
+              "with": "apps/know-me/src/environments/environment.stg.ts"
+            }
+          ],
+          "serviceWorker": true,
+          "ngswConfigPath": "apps/ew/ngsw-config.json"
+        },
+        "prepord": {
+          "fileReplacements": [
+            {
+              "replace": "apps/know-me/src/environments/environment.ts",
+              "with": "apps/know-me/src/environments/environment.preprod.ts"
+            }
+          ],
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
+        },
         "development": {
           "extractLicenses": false,
           "optimization": false,

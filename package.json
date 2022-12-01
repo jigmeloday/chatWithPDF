@@ -5,6 +5,8 @@
   "scripts": {
     "start": "nx serve",
     "start:stg": "nx serve -c stg",
+    "deploy:dev": " nx build ",
+    "deploy:preprod": " nx build ",
     "build": "nx build",
     "test": "nx test",
     "lint": "nx lint",
