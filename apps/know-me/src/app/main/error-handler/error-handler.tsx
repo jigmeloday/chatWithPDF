@@ -1,14 +1,30 @@
-import styles from './error-handler.module.scss';
+import React, { ReactNode } from 'react';
+import { Grid } from '@mui/material';
+import { Props, State } from './model/error-handler.model';
 
-/* eslint-disable-next-line */
-export interface ErrorHandlerProps {}
+class ErrorBoundary extends React.Component<Props, State> {
+  constructor ( props: Props ) {
+    super( props );
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError ( ): { hasError: boolean } {
+    return { hasError: true };
+  }
 
-export function ErrorHandler(props: ErrorHandlerProps): JSX.Element {
-  return (
-    <div className={styles['container']}>
-      <h1>Welcome to ErrorHandler!</h1>
-    </div>
-  );
+  override render (): JSX.Element | ReactNode {
+    if ( this.state.hasError ) {
+      return (
+        <Grid height='100vh' item alignItems='center' justifyContent='center' container lg={12}>
+          <Grid item xs={12} lg={6}>
+            <Grid container justifyContent='center'>
+              <span> This page is broken, go back</span>
+            </Grid>
+          </Grid>
+        </Grid>
+      );
+    }
+    return this.props.children;
+  }
 }
 
-export default ErrorHandler;
+export default ErrorBoundary;
