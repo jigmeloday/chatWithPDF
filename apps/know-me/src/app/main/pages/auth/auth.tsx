@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react';
 
 const Login = lazy(() => import( '../auth/login/login' ));
 const SignUp = lazy(() => import('../auth/sign-up/sign-up'));
+const PageNotFound = lazy( () => import('../page-not-found/page-not-found') );
 export function Auth(): JSX.Element {
   return (
     <Suspense fallback='loading...'>
@@ -10,7 +11,7 @@ export function Auth(): JSX.Element {
         <Route path='/' element={<Login />} />
         <Route path='/sign-up' element={<SignUp />} />
         <Route path='/forgot-password' element={<Login />} />
-        <Route path='*' element={<>page not found</>} />
+        <Route path='*' element={<PageNotFound />} />
       </Routes>
     </Suspense>
   );
