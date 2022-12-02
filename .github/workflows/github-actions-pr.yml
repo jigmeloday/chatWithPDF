@@ -5,7 +5,7 @@ on:
 jobs:
   install-deps:
 
-    runs-on: [self-hosted]
+    runs-on: [self-hosted, do]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
