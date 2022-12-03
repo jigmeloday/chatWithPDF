@@ -1,9 +1,9 @@
-import { APIResponse, Methods } from '../base-model/base.model';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { environment } from '../../../../../apps/know-me/src/environments/environment';
+import { APIResponse, Methods } from '../base-model/base.model';
 import toast from 'react-hot-toast';
 
-const baseUrl = environment.production;
+const baseUrl = environment.NX_BASE_URL;
 
 export const FetchAPI = async <T>( url: string, method: Methods, init?: RequestInit ): Promise<APIResponse<T>> => {
   return window.fetch( `${baseUrl}/${url}`, {
