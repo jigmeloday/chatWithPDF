@@ -9,14 +9,14 @@ function CoreRoute():JSX.Element {
   const AUTHENTICATED_ROUTE: RouteModel[] = [
     {
       id: '1',
-      path: '',
+      path: '*',
       component: <Landing />
     }
   ];
   const UNAUTHENTICATED_ROUTE: RouteModel[] = [
     {
       id: '1',
-      path: '',
+      path: '*',
       component: <Auth />
     }
   ];

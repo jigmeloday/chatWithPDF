@@ -1,14 +1,6 @@
-import styles from './login.module.scss';
-
-/* eslint-disable-next-line */
-export interface LoginProps {}
-
-export function Login(props: LoginProps): JSX.Element {
-  return (
-    <div className={styles['container']}>
-      <h1>Welcome to Login!</h1>
-    </div>
-  );
+import { LoginComponent } from '@know-me/auth-component';
+export function Login(): JSX.Element {
+  return ( <LoginComponent /> );
 }
 
 export default Login;
