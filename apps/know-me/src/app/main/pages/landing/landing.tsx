@@ -1,13 +1,35 @@
-import styles from './landing.module.scss';
+import { Route, Routes } from 'react-router-dom';
+import { Suspense } from 'react';
+import { RouteModel } from '../../shared/model/shared.model';
 
-/* eslint-disable-next-line */
-export interface LandingProps {}
+export function Landing():JSX.Element {
+  const isAdmin = false;
 
-export function Landing(props: LandingProps):JSX.Element {
+  const ADMIN: RouteModel[] = [
+    {
+      id: '1',
+      path: '*',
+      component: <Landing />
+    }
+  ];
+  const USER: RouteModel[] = [
+    {
+      id: '1',
+      path: '*',
+      component: <Landing />
+    }
+  ];
+
   return (
-    <div className={styles['container']}>
-      <h1>Welcome to Landing!</h1>
-    </div>
+    <Suspense fallback='loading...'>
+      <Routes>
+        {
+          (isAdmin ? ADMIN : USER).map(({ id, path, component }) =>
+            <Route key={`${path}+${id}`} path={path} element={component} />
+          )
+        }
+      </Routes>
+    </Suspense>
   );
 }
 

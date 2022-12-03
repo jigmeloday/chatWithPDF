@@ -3,4 +3,5 @@
 
 export const environment = {
   production: false,
+  NX_BASE_URL: ''
 };

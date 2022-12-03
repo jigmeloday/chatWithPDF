@@ -2,7 +2,8 @@ import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import App from './app/app';
 import { BrowserRouter } from 'react-router-dom';
-import { store } from './store/store';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { store } from '@know-me/services';
 import { Provider } from 'react-redux';
 
 const root = ReactDOM.createRoot(
