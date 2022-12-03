@@ -11,7 +11,7 @@ export interface IReducer {
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: [ COMMON_STATE_KEY ]
+  whitelist: [  ]
 };
 
 const REDUCER: Reducer<CombinedState<IReducer>> = combineReducers({
