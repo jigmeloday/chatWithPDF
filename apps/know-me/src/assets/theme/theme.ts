@@ -4,9 +4,9 @@ export const theme = ( mode?: PaletteMode ): Theme => createTheme({
   palette: {
     mode: mode,
     primary: {
-      main: '#5A9AF1',
-      light: '#C6D9FF',
-      dark: '#78ACFF',
+      main: '#f15ac6',
+      light: '#ffbef3',
+      dark: '#ff78ed',
     },
     success: {
       main: '#00C256',

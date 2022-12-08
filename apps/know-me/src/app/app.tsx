@@ -15,6 +15,7 @@ export function App(): JSX.Element {
            <CoreRoute />
          </AppWrapper>
       </ThemeProvider>
+
     );
 }
 
