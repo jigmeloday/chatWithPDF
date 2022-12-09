@@ -1,7 +1,3 @@
-
-/* eslint-disable-next-line */
-export interface AuthComponentProps {}
-
 export function AuthComponent():JSX.Element {
   return (
     <div >
