@@ -1,4 +1,5 @@
 import styles from './login.module.scss';
+import { memo } from 'react';
 
 /* eslint-disable-next-line */
 export interface LoginProps {}
@@ -11,4 +12,4 @@ export function LoginComponent(props: LoginProps): JSX.Element {
   );
 }
 
-export default LoginComponent;
+export default memo(LoginComponent);

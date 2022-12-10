@@ -10,7 +10,7 @@ export function Auth(): JSX.Element {
     <Suspense fallback='loading...'>
       <Routes>
         <Route path='/' element={<Login />} />
-        <Route path='/sign-up' element={<SignUp />} />
+        {/*<Route path='/sign-up' element={<SignUp />} />*/}
         <Route path='/forgot-password' element={<ForgotPassword />} />
         <Route path='*' element={<PageNotFound />} />
       </Routes>

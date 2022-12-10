@@ -1,8 +1,13 @@
+import { Grid } from '@mui/material';
+import LoginComponent from './login/login';
+import SignUp from './sign-up/sign-up';
+
 export function AuthComponent():JSX.Element {
   return (
-    <div >
-      <h1>Welcome to AuthComponent!</h1>
-    </div>
+   <div>
+     <LoginComponent />
+     <SignUp/>
+   </div>
   );
 }
 

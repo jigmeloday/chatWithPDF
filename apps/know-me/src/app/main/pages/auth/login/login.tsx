@@ -1,6 +1,6 @@
-import { LoginComponent } from '@know-me/auth-component';
+import { AuthComponent } from '@know-me/auth-component';
 export function Login(): JSX.Element {
-  return ( <LoginComponent /> );
+  return ( <AuthComponent /> );
 }
 
 export default Login;
