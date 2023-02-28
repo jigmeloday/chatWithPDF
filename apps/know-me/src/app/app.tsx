@@ -2,7 +2,7 @@ import CoreRoute from './main/core-route/core-route';
 import { PaletteMode, ThemeProvider } from '@mui/material';
 import { AppWrapper } from './main/shared/style/shared.style';
 import { Toaster } from 'react-hot-toast';
-import { theme } from '../../../../libs/shared/src/lib/theme/theme';
+import { theme } from '@know-me/shared';
 
 export function App(): JSX.Element {
   return (

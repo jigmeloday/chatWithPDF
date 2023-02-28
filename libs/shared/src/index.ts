@@ -11,3 +11,4 @@ export * from '../src/lib/components/button/button';
 export * from './lib/shared';
 export * from './lib/services/common-service/common-state.slice';
 export * from './lib/services/common-service/common-state.action';
+export * from './lib/theme/theme';
