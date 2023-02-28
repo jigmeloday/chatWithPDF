@@ -28,17 +28,17 @@ export function Header(props: { img: string }): JSX.Element {
           </Grid>
           <Grid item container direction='row' xs={4} alignItems='center' justifyContent='end' gap='18px'>
             <Box>
-              <Badge badgeContent={4} color="primary">
+              <Badge badgeContent={4} color='primary' >
                 <ShoppingCartOutlinedIcon fontSize='medium' />
               </Badge>
             </Box>
             <Box>
-              <Badge badgeContent={4} color="primary">
+              <Badge badgeContent={4}  color='primary'>
                 <FavoriteBorderOutlinedIcon fontSize='medium' />
               </Badge>
             </Box>
-            <Box px='22px'>
-              <AccountCircleOutlinedIcon fontSize='medium' />
+            <Box pl='22px'>
+              <AccountCircleOutlinedIcon fontSize='large' />
 
             </Box>
           </Grid>
