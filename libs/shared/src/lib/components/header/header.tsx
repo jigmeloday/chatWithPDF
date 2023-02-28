@@ -21,7 +21,7 @@ export function Header(props: { img: string }): JSX.Element {
             </Box>
           </Grid>
           <Grid item container  xs={4} justifyContent='center' >
-            <Input />
+            <Input placeholder='hello' variant='outlined'/>
           </Grid>
           <Grid item container direction='row' xs={4} justifyContent='end' gap='12px'>
             <Box>
