@@ -8,7 +8,7 @@ export function Header(): JSX.Element {
     <Grid container item>
       <Grid item container xs={12} bgcolor={theme('light').palette.black.dark} py='6px'>
        <Grid item container direction='row' gap='12px' justifyContent='center'>
-         <Typography label='Free Shipping' variant='body1' color={theme('light').palette.primary.light} />
+         <Typography label='Free Shipping' variant='body1' color={theme('light').palette.primary.dark} />
          <Typography label='order from all item' variant='body1' color={theme('light').palette.white.main} />
        </Grid>
       </Grid>
