@@ -1,10 +1,27 @@
-import styles from './landing.module.scss';
+import { Grid } from '@mui/material';
 
 export function Home():JSX.Element {
   return (
-    <div className={styles['container']}>
-      <h1>Welcome to Landing!</h1>
-    </div>
+    <Grid container item>
+      <Grid item container>
+        Banner
+      </Grid>
+      <Grid container item>
+        Discount Card
+      </Grid>
+      <Grid container item>
+        Category
+      </Grid>
+      <Grid container item>
+        Trending
+      </Grid>
+      <Grid container item>
+        Product Preview
+      </Grid>
+      <Grid container item>
+        subscribtion
+      </Grid>
+    </Grid>
   );
 }
 
