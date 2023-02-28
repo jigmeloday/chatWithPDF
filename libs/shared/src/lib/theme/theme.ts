@@ -4,14 +4,14 @@ export const theme = ( mode?: PaletteMode ): Theme => createTheme({
   palette: {
     mode: mode,
     primary: {
-      main: '#43c48e',
-      light: '#7bd6b0',
+      main: '#5fa800',
+      light: 'rgba(95,168,0,0.6)',
       dark: '#287655',
     },
     success: {
       main: '#00C256',
       light: 'rgba(0, 178, 79, 0.12)',
-      dark: '#00B24F'
+      dark: '#488100'
 
     },
     error: {

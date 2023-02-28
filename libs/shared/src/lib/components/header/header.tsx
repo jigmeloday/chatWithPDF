@@ -1,8 +1,11 @@
-import { Box, Divider, Grid } from '@mui/material';
+import { Badge, Box, Divider, Grid } from '@mui/material';
 import Input from '../input/input';
 import Typography from '../typography/typography';
 import { theme } from '../../theme/theme';
 import styles from './header.module.scss';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 
 export function Header(props: { img: string }): JSX.Element {
   return (
@@ -23,15 +26,20 @@ export function Header(props: { img: string }): JSX.Element {
           <Grid item container  xs={4} justifyContent='center' >
             <Input placeholder='hello' variant='outlined'/>
           </Grid>
-          <Grid item container direction='row' xs={4} justifyContent='end' gap='12px'>
+          <Grid item container direction='row' xs={4} alignItems='center' justifyContent='end' gap='18px'>
             <Box>
-              cart
+              <Badge badgeContent={4} color="primary">
+                <ShoppingCartOutlinedIcon fontSize='medium' />
+              </Badge>
             </Box>
             <Box>
-              Fav
+              <Badge badgeContent={4} color="primary">
+                <FavoriteBorderOutlinedIcon fontSize='medium' />
+              </Badge>
             </Box>
-            <Box>
-              Acc
+            <Box px='22px'>
+              <AccountCircleOutlinedIcon fontSize='medium' />
+
             </Box>
           </Grid>
         </Grid>
