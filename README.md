@@ -3,9 +3,6 @@
 [FEATURE](https://docs.google.com/document/d/1yl9_YcareOgYXOy1AfCAiB1tejD6-XeAJ9LHVjZfQ7Y/edit)
 #
 ### Hi,
-this is Know Me app. I made this app to learn Ruby on Rail with React ts. For now 
-this app is mainly for showing our skills, searching prefect teammate to work with and 
-also to get daily updates on whats going on.
 
 ***
 
