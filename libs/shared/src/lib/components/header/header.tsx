@@ -6,6 +6,8 @@ import styles from './header.module.scss';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import { NAVIGATION } from './constant/header.constant';
+import { Link } from 'react-router-dom';
 
 export function Header(props: { img: string }): JSX.Element {
   return (
@@ -39,7 +41,6 @@ export function Header(props: { img: string }): JSX.Element {
             </Box>
             <Box pl='22px'>
               <AccountCircleOutlinedIcon fontSize='large' />
-
             </Box>
           </Grid>
         </Grid>
@@ -47,7 +48,9 @@ export function Header(props: { img: string }): JSX.Element {
           <Divider />
         </Box>
         <Grid item container px='28px'>
-          hi
+          {
+            NAVIGATION.map(({ label, id, value }) => <Link to={''}>hello</Link>)
+          }
         </Grid>
       </Grid>
     </Grid>
