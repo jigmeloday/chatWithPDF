@@ -1,4 +1,4 @@
-import { Box, Grid } from '@mui/material';
+import { Box, Divider, Grid } from '@mui/material';
 import Input from '../input/input';
 import Typography from '../typography/typography';
 import { theme } from '../../theme/theme';
@@ -13,7 +13,7 @@ export function Header(props: { img: string }): JSX.Element {
          <Typography label='order from all item' variant='body1' color={theme('light').palette.white.main} />
        </Grid>
       </Grid>
-      <Grid item container direction='column' px='48px' py='28px'>
+      <Grid item container direction='column' px='48px' py='12px'>
         <Grid item container direction='row' px='28px'>
           <Grid item container xs={4}>
             <Box width='90px' height='60px'>
@@ -35,6 +35,9 @@ export function Header(props: { img: string }): JSX.Element {
             </Box>
           </Grid>
         </Grid>
+        <Box px='28px'>
+          <Divider />
+        </Box>
         <Grid item container px='28px'>
           hi
         </Grid>
