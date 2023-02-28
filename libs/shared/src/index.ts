@@ -1,3 +1,4 @@
+export * from './lib/components/header/header';
 export * from './lib/components/action-dialog/action-dialog';
 export * from './lib/components/card/card';
 export * from './lib/components/select/select';
