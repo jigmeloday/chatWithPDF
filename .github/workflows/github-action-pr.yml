@@ -17,4 +17,5 @@ jobs:
       - name: Install Dependencies & Lint
         run: |
           yarn install --frozen-lockfile
+          yarn lint
 #          yarn affected:lint --parallel=true --all
