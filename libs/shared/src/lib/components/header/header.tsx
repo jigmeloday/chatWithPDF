@@ -6,8 +6,11 @@ import { theme } from '../../theme/theme';
 export function Header(): JSX.Element {
   return (
     <Grid container item>
-      <Grid item container justifyContent='center' xs={12} bgcolor={theme('light').palette.black.dark} py='6px'>
-       <Typography />
+      <Grid item container xs={12} bgcolor={theme('light').palette.black.dark} py='6px'>
+       <Grid item container direction='row' gap='12px' justifyContent='center'>
+         <Typography label='Free Shipping' variant='body1' color={theme('light').palette.primary.light} />
+         <Typography label='order from all item' variant='body1' color={theme('light').palette.white.main} />
+       </Grid>
       </Grid>
       <Grid item container direction='column' px='48px' py='28px'>
 
