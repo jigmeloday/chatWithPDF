@@ -1,0 +1,81 @@
+.cursor--pointer {
+  cursor: pointer;
+}
+
+.display--block {
+  display: block;
+}
+
+.object-fit {
+  &--cover {
+    object-fit: cover;
+  }
+
+  &--contain {
+    object-fit: contain;
+  }
+}
+
+.position--relative {
+  position: relative;
+}
+
+.text {
+  &--center {
+    text-align: center;
+  }
+
+  &--right {
+    text-align: right;
+  }
+
+  &--decoration {
+    text-decoration: line-through;
+  }
+
+  &--uppercase {
+    text-transform: uppercase;
+  }
+
+  &--capitalize {
+    text-transform: capitalize;
+  }
+
+  &--decoration-none {
+    text-decoration: none;
+  }
+}
+
+.width {
+  &--full {
+    width: 100%;
+  }
+
+  &--inherit {
+    width: inherit;
+  }
+
+  &--fit-content {
+    width: fit-content;
+  }
+
+  &--fill-available {
+    width: -webkit-fill-available;
+  }
+}
+
+.height {
+  &--full {
+    height: 100%;
+  }
+
+  &--fit-content {
+    height: fit-content;
+  }
+}
+
+.border{
+  &--input fieldset {
+    border-radius: 8px;
+  }
+}
