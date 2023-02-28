@@ -4,10 +4,6 @@ on:
     branches: [ '**' ]
 jobs:
   install-deps:
-    env:
-#      NPM_REGISTRY_URL: ${{ secrets.NPM_REGISTRY_URL }}
-#      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-#      NPM_REGISTRY_USER: ${{ secrets.NPM_REGISTRY_USER }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -17,12 +13,9 @@ jobs:
           key: ${{runner.os}}-modules-${{hashFiles('**/yarn.lock')}}
       - uses: actions/setup-node@v2.5.1
         with:
-          node-version: 12.x
-
-      - run: |
-          node ./scripts/registry_setup.js
-
+          node-version: 18.x
       - name: Install Dependencies & Lint
         run: |
           yarn install --frozen-lockfile
-          yarn affected:lint --parallel=true --all
+          yarn lint
+#          yarn affected:lint --parallel=true --all
