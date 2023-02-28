@@ -2,18 +2,18 @@ import { Box, Grid } from '@mui/material';
 import Input from '../input/input';
 import Typography from '../typography/typography';
 import { theme } from '../../theme/theme';
+import styles from './header.module.scss';
 
 export function Header(): JSX.Element {
   return (
     <Grid container item>
       <Grid item container xs={12} bgcolor={theme('light').palette.black.dark} py='6px'>
        <Grid item container direction='row' gap='12px' justifyContent='center'>
-         <Typography label='Free Shipping' variant='body1' color={theme('light').palette.primary.dark} />
+         <Typography className={styles['blinking']} label='Free Shipping' variant='body1'/>
          <Typography label='order from all item' variant='body1' color={theme('light').palette.white.main} />
        </Grid>
       </Grid>
       <Grid item container direction='column' px='48px' py='28px'>
-
         <Grid item container direction='row' px='28px'>
           <Grid item container xs={4}>
             Logo
