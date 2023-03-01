@@ -1,13 +1,20 @@
-import styles from './input.module.scss';
+import { InputProps } from './model/input.model';
+import { CustomInput } from './style/input.style';
 
-/* eslint-disable-next-line */
-export interface InputProps {}
-
-export function Input(props: InputProps) {
+export function Input(props: InputProps): JSX.Element {
   return (
-    <div className={styles['container']}>
-      <h1>Welcome to Input!</h1>
-    </div>
+    <CustomInput
+      fullWidth
+      className={props?.className}
+      id={props?.id}
+      variant={props?.variant}
+      placeholder={props?.placeholder}
+      label={props?.label}
+      InputProps={props?.InputProps}
+      type={props.type}
+      value={props.value}
+      onChange={props.onChange}
+    />
   );
 }
 

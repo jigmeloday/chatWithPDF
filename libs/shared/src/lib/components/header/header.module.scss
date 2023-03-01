@@ -1,7 +1,21 @@
-/*
- * Replace this with your own classes
- *
- * e.g.
- * .container {
- * }
-*/
+.blinking{
+  animation: blinkingBackground 2s infinite;
+}
+@keyframes blinkingBackground{
+  0%		{ color: #00C256;}
+  25%		{ color: #fff;}
+  50%		{ color: #00C256;}
+  75%		{ color: #fff;}
+  100%	{ color: #00C256;}
+}
+
+.link{
+  color: black;
+  text-decoration: none;
+  transition: 0.25s;
+  &:hover{
+    transition: 0.25s;
+    text-decoration: underline;
+    color: #00C256;
+  }
+}

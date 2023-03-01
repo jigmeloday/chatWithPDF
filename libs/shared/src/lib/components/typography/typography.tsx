@@ -1,13 +1,22 @@
-import styles from './typography.module.scss';
+import { CustomTypography } from './style/typography.style';
+import { TypographyProps } from './model/typography.model';
 
-/* eslint-disable-next-line */
-export interface TypographyProps {}
 
-export function Typography(props: TypographyProps) {
+export function Typography( props: TypographyProps ): JSX.Element {
   return (
-    <div className={styles['container']}>
-      <h1>Welcome to Typography!</h1>
-    </div>
+    <CustomTypography
+      variant={ props.variant }
+      align={ props.align }
+      className={ props.className }
+      sx={ props.sx }
+      color={ props.color }
+      fontWeight={ props.fontWeight }
+      fontSize={ props.fontSize }
+      onClick={ props.click }
+      id={ props?.id } noWrap={ props?.noWrap }
+    >
+      {props?.label}
+    </CustomTypography>
   );
 }
 
