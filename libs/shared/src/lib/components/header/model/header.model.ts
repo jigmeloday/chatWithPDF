@@ -7,4 +7,5 @@ export interface NavigationModel {
 export interface ProfileMenuProps {
   handleClose: () => void;
   anchorEl: null | HTMLElement;
+
 }
