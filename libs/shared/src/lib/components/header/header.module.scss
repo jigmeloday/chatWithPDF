@@ -8,3 +8,11 @@
   75%		{ color: #fff;}
   100%	{ color: #00C256;}
 }
+
+.link{
+  color: black;
+  text-decoration: none;
+  &:hover{
+    color: #00C256;
+  }
+}

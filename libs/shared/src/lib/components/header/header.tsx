@@ -54,9 +54,13 @@ export function Header(props: { img: string }): JSX.Element {
         <Box px='28px'>
           <Divider />
         </Box>
-        <Grid item container px='28px'>
+        <Grid item container direction='row' px='28px' pt='12px'>
           {
-            NAVIGATION.map(({ label, id, value }) => <Link to={''}>hello</Link>)
+            NAVIGATION.map(({ label, id, value }) =>
+              <Box px='12px'>
+                <Link to={''} className={styles['link']}>{label}</Link>
+              </Box>
+            )
           }
         </Grid>
       </Grid>
