@@ -1,4 +1,4 @@
-import { Badge, Box, Divider, Grid } from '@mui/material';
+import { Badge, Box, Divider, Grid, InputAdornment } from '@mui/material';
 import Input from '../input/input';
 import Typography from '../typography/typography';
 import { theme } from '../../theme/theme';
@@ -7,6 +7,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { NAVIGATION } from './constant/header.constant';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { Link } from 'react-router-dom';
 
 export function Header(props: { img: string }): JSX.Element {
@@ -29,20 +30,22 @@ export function Header(props: { img: string }): JSX.Element {
             <Input placeholder='Search our store'
                    variant='outlined'
                    className='width--full custom-search-input'
-
+                   InputProps={ {
+                     startAdornment: (
+                       <InputAdornment position='end'>
+                         <SearchOutlinedIcon />
+                       </InputAdornment>
+                     ),
+                   } }
             />
           </Grid>
           <Grid item container direction='row' xs={4} alignItems='center' justifyContent='end' gap='18px'>
-            <Box>
-              <Badge badgeContent={4} color='primary' >
+              <Badge badgeContent={4} color='primary' className='cursor--pointer' >
                 <ShoppingCartOutlinedIcon fontSize='medium' />
               </Badge>
-            </Box>
-            <Box>
-              <Badge badgeContent={4}  color='primary'>
+              <Badge badgeContent={4}  color='primary' className='cursor--pointer'>
                 <FavoriteBorderOutlinedIcon fontSize='medium' />
               </Badge>
-            </Box>
             <Box pl='22px'>
               <AccountCircleOutlinedIcon fontSize='large' />
             </Box>
