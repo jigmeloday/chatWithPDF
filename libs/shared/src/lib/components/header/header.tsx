@@ -8,9 +8,12 @@ import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlin
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { NAVIGATION } from './constant/header.constant';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 
 export function Header(props: { img: string }): JSX.Element {
+  const currentLocation = useLocation().pathname;
+  const [isActive, setActive] = useState(currentLocation);
   return (
     <Grid container item>
       <Grid item container xs={12} bgcolor={theme('light').palette.black.dark} py='6px'>
@@ -57,8 +60,10 @@ export function Header(props: { img: string }): JSX.Element {
         <Grid item container direction='row' px='28px' pt='12px'>
           {
             NAVIGATION.map(({ label, id, value }) =>
-              <Box px='12px'>
-                <Link to={''} className={styles['link']}>{label}</Link>
+              <Box px='12px' key={id}>
+                <Link to={value} className={styles['link']} onClick={(): void => setActive(value)}>
+                  <Typography label={label} variant='body1' color={isActive === value ? 'primary': 'black' } />
+                </Link>
               </Box>
             )
           }

@@ -9,21 +9,21 @@ export const NAVIGATION: NavigationModel[] =[
   {
     id: '2',
     label: 'Shop',
-    value: '/'
+    value: '/shop'
   },
   {
     id: '3',
     label: 'Collection',
-    value: '/'
+    value: '/collection'
   },
   {
     id: '4',
     label: 'Vegetable',
-    value: '/'
+    value: '/vegetable'
   },
   {
-    id: '4',
+    id: '5',
     label: 'Fruit',
-    value: '/'
+    value: '/fruit'
   }
 ];
