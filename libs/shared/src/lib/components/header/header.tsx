@@ -9,11 +9,21 @@ import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { NAVIGATION } from './constant/header.constant';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import ProfileMenuComponent from './components/profile-menu.component';
 
 export function Header(props: { img: string }): JSX.Element {
   const currentLocation = useLocation().pathname;
   const [isActive, setActive] = useState(currentLocation);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
   return (
     <Grid container item>
       <Grid item container xs={12} bgcolor={theme('light').palette.black.dark} py='6px'>
@@ -49,7 +59,7 @@ export function Header(props: { img: string }): JSX.Element {
               <Badge badgeContent={4}  color='primary' className='cursor--pointer'>
                 <FavoriteBorderOutlinedIcon fontSize='medium' />
               </Badge>
-            <Box pl='22px'>
+            <Box pl='22px' className='cursor--pointer' onClick={handleClick}>
               <AccountCircleOutlinedIcon fontSize='large' />
             </Box>
           </Grid>
@@ -69,6 +79,7 @@ export function Header(props: { img: string }): JSX.Element {
           }
         </Grid>
       </Grid>
+      <ProfileMenuComponent handleClose={handleClose} anchorEl={anchorEl}  />
     </Grid>
   );
 }
