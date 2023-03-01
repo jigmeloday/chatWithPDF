@@ -59,8 +59,8 @@ export function Header(props: { img: string }): JSX.Element {
         </Box>
         <Grid item container direction='row' px='28px' pt='12px'>
           {
-            NAVIGATION.map(({ label, id, value }) =>
-              <Box px='12px' key={id}>
+            NAVIGATION.map(({ label, id, value }, index) =>
+              <Box px='22px' key={id} borderRight={index+1 !== NAVIGATION.length? '1px solid #e6e3e3' : 'none'}>
                 <Link to={value} className={styles['link']} onClick={(): void => setActive(value)}>
                   <Typography label={label} variant='body1' color={isActive === value ? 'primary': 'black' } />
                 </Link>
