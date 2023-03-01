@@ -6,6 +6,7 @@ import Typography from '../../typography/typography';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
 import classes from './cart.module.scss';
+import { theme } from '../../../theme/theme';
 
 function CartMenuComponent(props: ProfileMenuProps): JSX.Element {
   return(
@@ -18,27 +19,35 @@ function CartMenuComponent(props: ProfileMenuProps): JSX.Element {
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
         <Grid item container direction='column' px='24px'>
-          <Grid item container alignItems='center' direction='row' gap='18px'>
-            <Box width='80px' height='80px'>
-              <img src='https://images.unsplash.com/photo-1490885578174-acda8905c2c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjB8fGZydWl0c3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60'
-                height='100%' width='100%' className='object-fit--cover'
-              />
-            </Box>
-            <Box width='120px' >
-              <Typography label='Pineapple 100% Organic' variant='body1' />
+          <Grid item container alignItems='center' direction='row' gap='18px' my='12px'>
+            <Grid item container xs={3}>
+              <Box width='80px' height='80px'>
+                <img src='https://images.unsplash.com/photo-1490885578174-acda8905c2c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjB8fGZydWl0c3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60'
+                     height='100%' width='100%' className='object-fit--cover'
+                />
+              </Box>
+            </Grid>
+            <Grid item container xs={4}>
+              <Typography label='Pineapple 100% Organic' fontWeight='400' variant='subtitle2' />
               <Grid item container direction='row' py='8px'>
                 <Button variant='outlined' child={  <AddOutlinedIcon /> }  className={classes['button']} />
 
                 <Box padding='2px' height='20px'  className='text--center'  width='26px'>
                   4
                 </Box>
-                <Button variant='outlined' child={  <RemoveOutlinedIcon /> } className={classes['button']} />
+                <Button variant='outlined'
+                        child={  <RemoveOutlinedIcon /> } className={classes['button']} />
               </Grid>
-            </Box>
-            <Box>
-              <Typography label='4*120' variant='body1' />
-            </Box>
+            </Grid>
+            <Grid item container xs={3} alignItems='center' direction='column'>
+              <Typography label='Nu. 120.00' variant='body1'  color='primary'/>
+              <Box mt='20px' padding='8px' >
+                <Typography label='Remove' variant='body1'
+                            color={theme('light').palette.black.contrastText}/>
+              </Box>
+            </Grid>
           </Grid>
+
           <Grid item container py='22px' xs={12}>
             <Button variant='outlined' label='View Cart' className='cursor--pointer width--full' />
           </Grid>
