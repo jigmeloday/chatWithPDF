@@ -19,14 +19,18 @@ export function Header(props: { img: string }): JSX.Element {
        </Grid>
       </Grid>
       <Grid item container direction='column' px='48px' py='12px'>
-        <Grid item container direction='row' px='28px'>
+        <Grid item container direction='row' px='28px' pb='12px'>
           <Grid item container xs={4}>
             <Box width='90px' height='60px'>
               <img src={props?.img} className='object-fit' />
             </Box>
           </Grid>
-          <Grid item container  xs={4} justifyContent='center' >
-            <Input placeholder='hello' variant='outlined'/>
+          <Grid item container  xs={4} justifyContent='center' alignItems='center'>
+            <Input placeholder='Search our store'
+                   variant='outlined'
+                   className='width--full custom-search-input'
+
+            />
           </Grid>
           <Grid item container direction='row' xs={4} alignItems='center' justifyContent='end' gap='18px'>
             <Box>
