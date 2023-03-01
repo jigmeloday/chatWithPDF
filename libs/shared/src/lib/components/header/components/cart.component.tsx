@@ -5,6 +5,7 @@ import { Button } from '../../button/button';
 import Typography from '../../typography/typography';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
+import classes from './cart.module.scss';
 
 function CartMenuComponent(props: ProfileMenuProps): JSX.Element {
   return(
@@ -26,22 +27,21 @@ function CartMenuComponent(props: ProfileMenuProps): JSX.Element {
             <Box width='120px' >
               <Typography label='Pineapple 100% Organic' variant='body1' />
               <Grid item container direction='row' py='8px'>
-                <Box  height='20px' border='1px solid black' padding='2px'>
-                  <AddOutlinedIcon />
-                </Box>
-                <Box padding='2px' height='20px' border='1px solid black' className='text--center'  width='26px'>
+                <Button variant='outlined' child={  <AddOutlinedIcon /> }  className={classes['button']} />
+
+                <Box padding='2px' height='20px'  className='text--center'  width='26px'>
                   4
                 </Box>
-                <Box  height='20px' border='1px solid black' padding='2px'>
-                  <RemoveOutlinedIcon />
-                </Box>
+                <Button variant='outlined' child={  <RemoveOutlinedIcon /> } className={classes['button']} />
               </Grid>
             </Box>
             <Box>
               <Typography label='4*120' variant='body1' />
             </Box>
           </Grid>
-          <Button />
+          <Grid item container py='22px' xs={12}>
+            <Button variant='outlined' label='View Cart' className='cursor--pointer width--full' />
+          </Grid>
         </Grid>
     </Menu>
   );

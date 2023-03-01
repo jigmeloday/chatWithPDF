@@ -89,8 +89,12 @@ export function Header(props: { img: string }): JSX.Element {
           }
         </Grid>
       </Grid>
-      <CartMenuComponent handleClose={cartHandleClose} anchorEl={cartAnchorEl} />
-      {/*<ProfileMenuComponent handleClose={handleClose} anchorEl={anchorEl} />*/}
+      {
+        !!cartAnchorEl && <CartMenuComponent handleClose={cartHandleClose} anchorEl={cartAnchorEl} />
+      }
+      {
+        !!anchorEl && <ProfileMenuComponent handleClose={handleClose} anchorEl={anchorEl} />
+      }
     </Grid>
   );
 }
