@@ -1,10 +1,11 @@
 import { Grid } from '@mui/material';
+import { Banner }  from '@know-me/banner';
 
 export function Home():JSX.Element {
   return (
     <Grid container item>
       <Grid item container>
-        Banner
+        <Banner />
       </Grid>
       <Grid container item>
         Discount Card
