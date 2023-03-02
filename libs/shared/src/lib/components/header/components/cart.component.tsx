@@ -44,6 +44,7 @@ function CartMenuComponent(props: ProfileMenuProps): JSX.Element {
               <Typography label={ `Nu.${120 * count}`} variant='body1'  color='primary'/>
               <Box mt='20px' padding='8px' >
                 <Typography label='Remove' variant='body1'
+                            className='cursor--pointer'
                             color={theme('light').palette.black.contrastText}/>
               </Box>
             </Grid>
