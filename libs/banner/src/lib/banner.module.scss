@@ -1,7 +1,18 @@
-/*
- * Replace this with your own classes
- *
- * e.g.
- * .container {
- * }
-*/
+.landing-cover {
+  height: 400px;
+  &:after {
+  border-radius: 8px;
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  }
+
+  &__detail {
+    left: 10%;
+    position: absolute;
+    top: 32%;
+    z-index: 2;
+  }
+}
