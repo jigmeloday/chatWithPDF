@@ -31,13 +31,17 @@ function CartMenuComponent(props: ProfileMenuProps): JSX.Element {
             <Grid item container xs={3}>
               <Typography label='Pineapple 100% Organic' fontWeight='400' variant='subtitle2' />
               <Grid item container direction='row' py='8px'>
-                <Button variant='outlined' child={  <AddOutlinedIcon /> }  className={classes['button']} click={():void => setCount(count+1)} />
+                <Button variant='outlined'
+                        child={  <AddOutlinedIcon /> }
+                        className={classes['button']}
+                        click={():void => setCount(count+1)} />
 
                 <Box padding='2px' height='20px'  className='text--center'  width='26px'>
                   {count}
                 </Box>
                 <Button variant='outlined'
-                        child={  <RemoveOutlinedIcon /> } className={classes['button']} click={():void => setCount(count-1)}/>
+                        child={  <RemoveOutlinedIcon /> }
+                        className={classes['button']} click={():void => setCount(count-1)}/>
               </Grid>
             </Grid>
             <Grid item container xs={3} alignItems='center' direction='column'>
