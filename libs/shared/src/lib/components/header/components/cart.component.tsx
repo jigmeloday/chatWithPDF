@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { Box, Grid, Menu } from '@mui/material';
 import { ProfileMenuProps } from '../model/header.model';
 import { Button } from '../../button/button';
@@ -9,6 +9,7 @@ import classes from './cart.module.scss';
 import { theme } from '../../../theme/theme';
 
 function CartMenuComponent(props: ProfileMenuProps): JSX.Element {
+  const [count, setCount] = useState(1);
   return(
       <Menu
       anchorEl={props.anchorEl}
@@ -27,20 +28,20 @@ function CartMenuComponent(props: ProfileMenuProps): JSX.Element {
                 />
               </Box>
             </Grid>
-            <Grid item container xs={4}>
+            <Grid item container xs={3}>
               <Typography label='Pineapple 100% Organic' fontWeight='400' variant='subtitle2' />
               <Grid item container direction='row' py='8px'>
-                <Button variant='outlined' child={  <AddOutlinedIcon /> }  className={classes['button']} />
+                <Button variant='outlined' child={  <AddOutlinedIcon /> }  className={classes['button']} click={():void => setCount(count+1)} />
 
                 <Box padding='2px' height='20px'  className='text--center'  width='26px'>
-                  4
+                  {count}
                 </Box>
                 <Button variant='outlined'
-                        child={  <RemoveOutlinedIcon /> } className={classes['button']} />
+                        child={  <RemoveOutlinedIcon /> } className={classes['button']} click={():void => setCount(count-1)}/>
               </Grid>
             </Grid>
             <Grid item container xs={3} alignItems='center' direction='column'>
-              <Typography label='Nu. 120.00' variant='body1'  color='primary'/>
+              <Typography label={ `Nu.${120 * count}`} variant='body1'  color='primary'/>
               <Box mt='20px' padding='8px' >
                 <Typography label='Remove' variant='body1'
                             color={theme('light').palette.black.contrastText}/>
