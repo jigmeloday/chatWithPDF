@@ -9,23 +9,28 @@ export function Banner(): JSX.Element {
   return (
     <Swiper
       spaceBetween={50}
-      modules={ [ Autoplay, Pagination, EffectFade ] } effect={ 'fade' }
+      modules={ [ Autoplay, Pagination, EffectFade, Navigation ] } effect={ 'fade' }
       slidesPerView={ 1 }
-      autoplay={{ delay: 3000, disableOnInteraction: false }}
+      navigation={true}
+      rewind={true}
+      autoplay={{ delay: 3000 }}
       pagination={{ clickable: true }}
       scrollbar={{ draggable: true }}
     >
       {
         BANNER_DUMMY.map(({ img, title, subTitle, id }) =>(
           <SwiperSlide>
-            <BannerComponent item container >
-              <Box width='100%'>
+            <BannerComponent className='banner-component' item container >
+              <Box width='100%' className='position--relative'>
                 <img
                   src={img}
                   height='100%'
                   width='100%'
-                  className='object-fit--cover'
+                  className='object-fit--cover '
                 />
+                <Grid item container className='banner-detail'>
+                  xccxcasdfasfdasfsadfasdfasdf
+                </Grid>
               </Box>
             </BannerComponent>
           </SwiperSlide>
