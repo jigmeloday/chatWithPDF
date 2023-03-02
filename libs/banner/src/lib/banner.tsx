@@ -21,7 +21,7 @@ export function Banner(): JSX.Element {
       {
         BANNER_DUMMY.map((banner) =>(
           <SwiperSlide key={banner.id}>
-            <BannerPreviewComponent items={banner} />
+              <BannerPreviewComponent items={banner} />
           </SwiperSlide>
         ))
       }

@@ -3,4 +3,5 @@ export interface BannerModel {
   img: string,
   title: string,
   subTitle: string
+  align: string
 }

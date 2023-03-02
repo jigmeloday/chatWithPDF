@@ -10,14 +10,18 @@ function BannerPreviewComponent(props: { items: BannerModel }): JSX.Element {
         <img height='100%' width='100%' className='object-fit--cover br-8'
              src={ props.items.img } alt='landing cover'/>
 
-          <Box width='580px' className={style['landing-cover__detail']}>
-            <Typography label={props?.items?.title}
-                        variant='h4'
-            />
-            <Typography label={props?.items?.subTitle} variant='h2'
-                        fontWeight={ theme('light').typography.fontWeightBold } />
-            <Button variant='contained' label='Shop' />
-          </Box>
+          <Grid container item className={style['landing-cover__detail']}>
+              <Box width='324px'>
+                <Typography label={props?.items?.title}
+                            variant='h4'
+                />
+                <Typography label={props?.items?.subTitle} variant='h2'
+                            fontWeight={ theme('light').typography.fontWeightBold } />
+                <Box py='18px'>
+                  <Button variant='contained' label='Shop' />
+                </Box>
+              </Box>
+          </Grid>
       </Box>
   );
 }
