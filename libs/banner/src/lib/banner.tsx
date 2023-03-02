@@ -1,9 +1,6 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper';
 import { BANNER_DUMMY } from './constant/banner.constnat';
-import { Box, Grid } from '@mui/material';
-import { theme, Typography } from '@know-me/shared';
-import style from './banner.module.scss';
 import BannerPreviewComponent from './component/banner-preview.component';
 
 export function Banner(): JSX.Element {
