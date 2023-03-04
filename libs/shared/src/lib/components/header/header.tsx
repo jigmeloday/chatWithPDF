@@ -9,11 +9,29 @@ import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { NAVIGATION } from './constant/header.constant';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import ProfileMenuComponent from './components/profile-menu.component';
+import CartMenuComponent from './components/cart.component';
 
 export function Header(props: { img: string }): JSX.Element {
   const currentLocation = useLocation().pathname;
   const [isActive, setActive] = useState(currentLocation);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [cartAnchorEl, setCartAnchorEl] = useState<null | HTMLElement>(null);
+  const handleClick = (event: React.MouseEvent<HTMLElement>): void => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCartClick = (event: React.MouseEvent<HTMLElement>): void => {
+    setCartAnchorEl(event.currentTarget);
+  };
+  const handleClose = (): void => {
+    setAnchorEl(null);
+  };
+  const cartHandleClose = (): void => {
+    setCartAnchorEl(null);
+  };
+
+
   return (
     <Grid container item>
       <Grid item container xs={12} bgcolor={theme('light').palette.black.dark} py='6px'>
@@ -43,13 +61,15 @@ export function Header(props: { img: string }): JSX.Element {
             />
           </Grid>
           <Grid item container direction='row' xs={4} alignItems='center' justifyContent='end' gap='18px'>
-              <Badge badgeContent={4} color='primary' className='cursor--pointer' >
-                <ShoppingCartOutlinedIcon fontSize='medium' />
-              </Badge>
+              <Box onClick={handleCartClick}>
+                <Badge badgeContent={4} color='primary' className='cursor--pointer' >
+                  <ShoppingCartOutlinedIcon fontSize='medium'  />
+                </Badge>
+              </Box>
               <Badge badgeContent={4}  color='primary' className='cursor--pointer'>
                 <FavoriteBorderOutlinedIcon fontSize='medium' />
               </Badge>
-            <Box pl='22px'>
+            <Box pl='22px' className='cursor--pointer' onClick={handleClick}>
               <AccountCircleOutlinedIcon fontSize='large' />
             </Box>
           </Grid>
@@ -69,6 +89,12 @@ export function Header(props: { img: string }): JSX.Element {
           }
         </Grid>
       </Grid>
+      {
+        !!cartAnchorEl && <CartMenuComponent handleClose={cartHandleClose} anchorEl={cartAnchorEl} />
+      }
+      {
+        !!anchorEl && <ProfileMenuComponent handleClose={handleClose} anchorEl={anchorEl} />
+      }
     </Grid>
   );
 }
