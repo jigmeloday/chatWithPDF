@@ -1,14 +1,17 @@
 import styles from './card.module.scss';
+import { Card, Grid } from '@mui/material';
 
 /* eslint-disable-next-line */
-export interface CardProps {}
+export interface CardProps {
+  children: any
+}
 
-export function Card(props: CardProps) {
+export function CustomCard(props: CardProps): JSX.Element {
   return (
-    <div className={styles['container']}>
-      <h1>Welcome to Card!</h1>
-    </div>
+    <Card>
+      {props?.children}
+    </Card>
   );
 }
 
-export default Card;
+export default CustomCard;
