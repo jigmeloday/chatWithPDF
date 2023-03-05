@@ -1,13 +1,10 @@
-import styles from './discount.module.scss';
+import { Grid } from '@mui/material';
 
-/* eslint-disable-next-line */
-export interface DiscountProps {}
-
-export function Discount(props: DiscountProps) {
+export function Discount():JSX.Element {
   return (
-    <div className={styles['container']}>
-      <h1>Welcome to Discount!</h1>
-    </div>
+    <Grid>
+
+    </Grid>
   );
 }
 
