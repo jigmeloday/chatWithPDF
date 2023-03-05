@@ -1,5 +1,6 @@
 import { Grid } from '@mui/material';
 import { Banner }  from '@know-me/banner';
+import { Discount } from '@know-me/discount';
 
 export function Home():JSX.Element {
   return (
@@ -8,7 +9,7 @@ export function Home():JSX.Element {
         <Banner />
       </Grid>
       <Grid container item>
-        Discount Card
+        <Discount />
       </Grid>
       <Grid container item>
         Category
