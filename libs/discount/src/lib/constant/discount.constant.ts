@@ -6,7 +6,7 @@ export const DISCOUNT_DUMMY: DiscountModel[] = [
     title: 'Fresh fruit,vegetable on our product',
     discount: 20,
     url: '',
-    bgImage: 'https://vegina-store.myshopify.com/collections/cat2'
+    bgImage: 'https://cdn.shopify.com/s/files/1/0412/8151/9765/files/banner-3.jpg?v=1671689630'
   },
   {
     id: '2d',
