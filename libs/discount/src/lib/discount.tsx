@@ -5,13 +5,13 @@ import { DISCOUNT_DUMMY } from './constant/discount.constant';
 export function Discount():JSX.Element {
   return (
     <Grid container item padding='32px'>
-      <Grid item container direction='row' px='26px' py='14px' gap='12px' justifyContent='space-around'>
+      <Grid item container direction='row' px='26px' py='14px' justifyContent='space-around' >
         {
           DISCOUNT_DUMMY.map(({ discount, url, title, id, bgImage }) => (
-            <Grid item container xs={5}>
+            <Grid item container xs={5.9}>
               <CustomCard>
                 <Grid item container xs={5}>
-                  <img src={bgImage}  className='object-fit'/>
+                  <img src={bgImage}  className='object-fit--cover'/>
                 </Grid>
               </CustomCard>
             </Grid>
