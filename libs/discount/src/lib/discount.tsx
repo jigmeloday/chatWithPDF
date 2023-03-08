@@ -14,8 +14,10 @@ export function Discount():JSX.Element {
                   <Grid item container xs={5} sx={{ position: 'relative'  }}>
                     <img src={bgImage} className='object-fit--cover'/>
                   </Grid>
-                  <Grid item container xs={5} sx={{ position: 'absolute' }}>
-                    hello
+                  <Grid item container xs={5} justifyContent='center' sx={{ position: 'absolute', padding: '22px' }}>
+                    <Grid item container direction='column' >
+                      hello
+                    </Grid>
                   </Grid>
                 </Grid>
               </CustomCard>
