@@ -17,6 +17,7 @@
     "paths": {
       "@know-me/auth-component": ["libs/auth-component/src/index.ts"],
       "@know-me/banner": ["libs/banner/src/index.ts"],
+      "@know-me/discount": ["libs/discount/src/index.ts"],
       "@know-me/landing": ["libs/landing/src/index.ts"],
       "@know-me/profile": ["libs/profile/src/index.ts"],
       "@know-me/services": ["libs/services/src/index.ts"],
