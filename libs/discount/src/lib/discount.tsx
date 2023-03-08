@@ -14,7 +14,7 @@ export function Discount():JSX.Element {
                   <Grid item container xs={5} sx={{ position: 'relative'  }}>
                     <img src={bgImage} className='object-fit--cover'/>
                   </Grid>
-                  <Grid item container xs={5} sx={{ position: 'absolute'}}>
+                  <Grid item container xs={5} sx={{ position: 'absolute' }}>
                     hello
                   </Grid>
                 </Grid>
