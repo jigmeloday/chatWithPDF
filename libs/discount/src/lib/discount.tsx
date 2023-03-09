@@ -16,7 +16,7 @@ export function Discount():JSX.Element {
                   </Grid>
                   <Grid item container xs={5} justifyContent='center' sx={{ position: 'absolute', padding: '22px' }}>
                     <Grid item container direction='column' >
-                      hello
+                      need this to be at center
                     </Grid>
                   </Grid>
                 </Grid>
