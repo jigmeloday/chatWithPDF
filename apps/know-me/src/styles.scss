@@ -1,8 +1,0 @@
-/* You can add global styles to this file, and also import other styles files */
-  @use 'styles/utilities' as *;
-  @use 'styles/overwrite' as *;
-
-* {
-  margin: 0;
-  scroll-behavior: smooth;
-}
