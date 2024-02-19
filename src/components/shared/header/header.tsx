@@ -1,6 +1,6 @@
 function Header() {
   return(
-    <>header</>
+    <div className='font-bold'>header</div>
   )
 }
 
