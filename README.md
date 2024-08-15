@@ -22,3 +22,14 @@ To get started, clone this repository, pick a project, and start coding! Here's 
 
 ```bash
 git clone https://github.com/your-username/100-days-of-fe-challenge.git
+
+Open any project's folder and double-click on `index.html` to see the project in action.
+
+## Learn More
+
+To learn more about HTML, CSS, and JavaScript, check out the following resources:
+
+- [HTML Documentation](https://developer.mozilla.org/en-US/docs/Web/HTML)
+- [CSS Documentation](https://developer.mozilla.org/en-US/docs/Web/CSS)
+- [JavaScript Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+
