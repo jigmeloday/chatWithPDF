@@ -1,0 +1,60 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-container{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    min-height: 40%;
+    padding: 40px 20px;
+    border:1px solid ;
+}
+
+.product-images{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: fit-content;
+}
+
+.product-images img{
+    height: 100px;
+    width: 90px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+.active {
+    border: 2px solid cornflowerblue;
+}
+.main-product{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 360px;
+    width: 320px;
+}
+.main-product img{
+    height: 100%;
+    width: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.description {
+    width: 330px;
+    border: 1px solid;
+    padding: 10px 4px
+}
+.subtitle{
+    font-size: 13px;
+    color: #858585;
+    font-weight: 500;
+}
+.brand{
+    color: cornflowerblue;
+    font-size: 13px;
+    font-weight: 600;
+}
