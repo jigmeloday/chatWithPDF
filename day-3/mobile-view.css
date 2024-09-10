@@ -50,5 +50,22 @@ body{
 .menu-items .item {
   width: 100%;
   display: flex;
+  align-items: center;
+  margin: 12px 0;
   justify-content: space-between;
+}
+
+.item span{
+  font-weight: 600;
+}
+.menu-items .menu-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-items .menu-label div{
+  background: #E9EEFF;
+  padding: 6px;
+  border-radius: 4px;
 }
