@@ -45,6 +45,7 @@ body{
 }
 .container hr{
   margin: 20px 0;
+  border: 0.5px solid #e0e0e0;
 }
 
 .menu-items .item {
