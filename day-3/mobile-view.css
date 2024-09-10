@@ -69,3 +69,14 @@ body{
   padding: 6px;
   border-radius: 4px;
 }
+.footer {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.footer i{
+  color: rgba(187, 201, 253, 0.51);
+}
+.footer .active {
+  color: #bbc9fd;
+}
