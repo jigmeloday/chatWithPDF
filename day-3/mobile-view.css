@@ -46,3 +46,9 @@ body{
 .container hr{
   margin: 20px 0;
 }
+
+.menu-items .item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
