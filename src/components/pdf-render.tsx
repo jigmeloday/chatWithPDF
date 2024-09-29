@@ -25,9 +25,9 @@ import {
 } from './ui/dropdown-menu'
 import SimpleBar from 'simplebar-react'
 import 'simplebar-react/dist/simplebar.min.css'
-import { PdfRendererProps } from '@/components/model/max-width-wrapper';
 import { useToast } from '@/hooks/use-toast';
 import PdfFullscreen from '@/components/pdf-fullscreen';
+import { PdfRendererProps } from '@/components/model/components.model';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
