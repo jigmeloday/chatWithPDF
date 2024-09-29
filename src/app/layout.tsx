@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from '@/lib/utils';
 import NavBar from '@/components/nav-bar';
 import Provider from '@/components/provider';
+import { Toaster } from '@/components/ui/toaster';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,6 +33,7 @@ export default function RootLayout({
         <body
             className={cn(geistSans.variable, geistMono.variable, 'antialiased min-h-screen font-sans grainy' )}
         >
+        <Toaster />
         <NavBar />
         {children}
         </body>
