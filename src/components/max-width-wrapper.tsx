@@ -1,6 +1,5 @@
-import { ReactNode } from 'react';
-import { MaxWidthProps } from '@/components/model/max-width-wrapper';
 import { cn } from '@/lib/utils';
+import { MaxWidthProps } from '@/components/model/components.model';
 
 function MaxWidthWrapper({ className, children }: MaxWidthProps) {
     return(

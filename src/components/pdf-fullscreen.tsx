@@ -10,10 +10,8 @@ import SimpleBar from 'simplebar-react'
 import { Document, Page } from 'react-pdf'
 import { useResizeDetector } from 'react-resize-detector'
 import { useToast } from '@/hooks/use-toast';
+import { PdfFullscreenProps } from '@/components/model/components.model';
 
-interface PdfFullscreenProps {
-    fileUrl: string
-}
 
 const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
     const [isOpen, setIsOpen] = useState(false)

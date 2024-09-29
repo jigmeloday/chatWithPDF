@@ -33,7 +33,7 @@ function Dashboard() {
         })
 
     const { data:files, isLoading } = trpc.getUserFiles.useQuery();
-    console.log(files)
+
     return(
         <main className='mx-auto max-w-7xl md:p-10'>
             <div className='mt-8 flex flex-col sm:flex-row items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:items-center sm:gap-0'>
