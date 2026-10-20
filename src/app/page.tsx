@@ -1,9 +1,13 @@
 import MaxWidthWrapper from '@/components/max-width-wrapper';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { getSessionUser } from '@/lib/auth';
 import { ArrowRight, Highlighter, MessageCircleQuestion, Search } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 
-export default function Home() {
+export default async function Home() {
+    if ( await getSessionUser() ) redirect('/dashboard');
+
     return (
         <div>
             <MaxWidthWrapper

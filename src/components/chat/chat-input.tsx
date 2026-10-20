@@ -29,6 +29,7 @@ function ChatInput({ isDisabled }: { isDisabled?: boolean }){
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter' && !e.shiftKey) {
                                         e.preventDefault()
+                                        if ( isLoading || isDisabled ) return
 
                                         addMessage()
 
