@@ -2,10 +2,11 @@ import Link from 'next/link';
 import { PropsWithChildren } from 'react';
 import UserMenu from '@/components/user-menu';
 import PoweredBy from '@/components/powered-by';
+import { Avatar } from '@/components/settings/profile-section';
 import { SidebarLinks, SidebarUsage, SignOutButton } from '@/components/sidebar-nav';
 
 interface AppShellProps extends PropsWithChildren {
-    user: { name: string; email: string };
+    user: { name: string; email: string; image?: string | null };
 }
 
 function AppShell({ user, children }: AppShellProps) {
@@ -25,9 +26,7 @@ function AppShell({ user, children }: AppShellProps) {
                     <SidebarUsage />
                 </div>
                 <div className='flex items-center gap-3 border-t border-zinc-200 pt-4'>
-                    <span className='flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-sm font-semibold text-white'>
-                        {(user.name || user.email).charAt(0).toUpperCase()}
-                    </span>
+                    <Avatar user={{ name: user.name, email: user.email, image: user.image ?? null }} size='h-9 w-9 text-sm' />
                     <div className='min-w-0 flex-1'>
                         {user.name && <p className='truncate text-sm font-medium'>{user.name}</p>}
                         <p className='truncate text-xs text-zinc-500'>{user.email}</p>
@@ -42,7 +41,7 @@ function AppShell({ user, children }: AppShellProps) {
                     <Link href='/dashboard' className='font-semibold'>
                         Otterly
                     </Link>
-                    <UserMenu name={user.name} email={user.email} />
+                    <UserMenu name={user.name} email={user.email} image={user.image ?? null} />
                 </header>
                 {children}
             </div>

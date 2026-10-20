@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { NAV_GROUPS } from '@/config/nav';
+import { Avatar } from '@/components/settings/profile-section';
 import { authClient } from '@/lib/auth-client';
 import {
     DropdownMenu,
@@ -16,11 +17,11 @@ import {
 interface UserMenuProps {
     name: string;
     email: string;
+    image?: string | null;
 }
 
-function UserMenu({ name, email }: UserMenuProps) {
+function UserMenu({ name, email, image }: UserMenuProps) {
     const router = useRouter();
-    const initial = (name || email).charAt(0).toUpperCase();
 
     const signOut = async () => {
         await authClient.signOut();
@@ -32,8 +33,8 @@ function UserMenu({ name, email }: UserMenuProps) {
         <DropdownMenu>
             <DropdownMenuTrigger
                 aria-label='Account menu'
-                className='flex h-9 w-9 items-center justify-center rounded-full bg-green-600 text-sm font-semibold text-white outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-green-600'>
-                {initial}
+                className='rounded-full outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-green-600'>
+                <Avatar user={{ name, email, image: image ?? null }} size='h-9 w-9 text-sm' />
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' className='max-h-[80vh] w-56 overflow-y-auto'>
                 <DropdownMenuLabel className='flex flex-col'>

@@ -10,6 +10,7 @@ import { z } from 'zod'
 import { generateApiKey } from '@/lib/api-keys'
 import { processDocument } from '@/lib/process-document'
 import { storage } from '@/lib/storage'
+import { ANSWER_LANGUAGES, ANSWER_STYLES } from '@/config/preferences'
 import { assertSafeWebhookUrl, deliverWebhook, generateWebhookSecret, WEBHOOK_EVENTS } from '@/lib/webhooks'
 import { embedQuery } from '@/lib/ai/gemini'
 import { rateLimit } from '@/lib/rate-limit'
@@ -226,6 +227,37 @@ export const appRouter = router({
             if ( !endpoint ) throw new TRPCError({ code: 'NOT_FOUND' })
             return deliverWebhook(endpoint, 'test.ping', { message: 'This is a test event from Otterly.' })
         }),
+
+    getPreferences: privateProcedure.query(async ({ ctx }) => {
+        const u = await db.user.findUniqueOrThrow({
+            where: { id: ctx.userId },
+            select: { answerStyle: true, answerLanguage: true, notifyDocReady: true, notifyDocFailed: true },
+        })
+        return u
+    }),
+    updatePreferences: privateProcedure
+        .input(z.object({
+            answerStyle: z.enum(ANSWER_STYLES).optional(),
+            answerLanguage: z.enum(ANSWER_LANGUAGES).optional(),
+            notifyDocReady: z.boolean().optional(),
+            notifyDocFailed: z.boolean().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+            await db.user.update({ where: { id: ctx.userId }, data: input })
+            return { success: true }
+        }),
+    deleteAllChats: privateProcedure.mutation(async ({ ctx }) => {
+        const messages = await db.message.deleteMany({ where: { userId: ctx.userId } })
+        const chats = await db.chat.deleteMany({ where: { userId: ctx.userId } })
+        return { messages: messages.count, chats: chats.count }
+    }),
+    deleteAllDocuments: privateProcedure.mutation(async ({ ctx }) => {
+        const files = await db.file.findMany({ where: { userId: ctx.userId }, select: { key: true } })
+        await db.message.deleteMany({ where: { userId: ctx.userId } })
+        await db.file.deleteMany({ where: { userId: ctx.userId } })
+        await Promise.all(files.map((f) => storage.remove(f.key)))
+        return { deleted: files.length }
+    }),
 
     getUsageBreakdown: privateProcedure.query(async ({ ctx }) => {
         const usage = await getUsageSummary(ctx.userId)

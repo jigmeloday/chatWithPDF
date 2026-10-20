@@ -32,7 +32,7 @@ export const auth = betterAuth({
                 const files = await db.file.findMany({ where: { userId: user.id }, select: { key: true } });
                 await db.message.deleteMany({ where: { userId: user.id } });
                 await db.file.deleteMany({ where: { userId: user.id } });
-                await Promise.all(files.map((f) => storage.remove(f.key)));
+                await Promise.all([...files.map((f) => storage.remove(f.key)), storage.remove(`avatar_${user.id}`)]);
             },
         },
     },

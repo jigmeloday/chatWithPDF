@@ -2,6 +2,7 @@ import { db } from '@/db';
 import { embedQuery } from '@/lib/ai/gemini';
 import { ChatMessage, streamChat, TokenUsage } from '@/lib/ai/groq';
 import { searchChunks, searchChunksIn } from '@/lib/vector-store';
+import { preferenceInstructions } from '@/lib/preferences';
 
 const HISTORY_LIMIT = 6;
 const CONTEXT_CHUNKS = 5;
@@ -55,13 +56,14 @@ export const answerQuestion = async ({
           ).reverse()
         : [];
 
+    const prefs = await preferenceInstructions(userId);
     const chunks = await searchChunks(fileId, await embedQuery(message), maxSources);
     const context = chunks.map((c) => `[Page ${c.page}]\n${c.content}`).join('\n\n---\n\n');
 
     const messages: ChatMessage[] = [
         {
             role: 'system',
-            content: `${SYSTEM_PROMPT}${instructions ? `\n\nAdditional instructions from the developer:\n${instructions}` : ''}\n\nDocument excerpts:\n${context}`,
+            content: `${SYSTEM_PROMPT}${prefs ? `\n\nUser preferences: ${prefs}` : ''}${instructions ? `\n\nAdditional instructions from the developer:\n${instructions}` : ''}\n\nDocument excerpts:\n${context}`,
         },
         ...history.map((m) => ({
             role: m.isUserMessage ? ('user' as const) : ('assistant' as const),
@@ -117,11 +119,12 @@ export const answerAcross = async ({ userId, chatId, fileIds, message, onText = 
     ).reverse();
 
     // Take extra passages so each selected document has a chance to be represented.
+    const prefs = await preferenceInstructions(userId);
     const hits = await searchChunksIn(fileIds, await embedQuery(message), Math.min(12, 4 + fileIds.length * 2));
     const context = hits.map((h) => `[${h.name}, page ${h.page}]\n${h.content}`).join('\n\n---\n\n');
 
     const messages: ChatMessage[] = [
-        { role: 'system', content: `${MULTI_SYSTEM_PROMPT}\n\nExcerpts:\n${context}` },
+        { role: 'system', content: `${MULTI_SYSTEM_PROMPT}${prefs ? `\n\nUser preferences: ${prefs}` : ''}\n\nExcerpts:\n${context}` },
         ...history.map((m) => ({ role: m.isUserMessage ? ('user' as const) : ('assistant' as const), content: m.text })),
         { role: 'user', content: message },
     ];

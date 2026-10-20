@@ -6,6 +6,7 @@ import { PageText, embedTexts, ocrPdf } from '@/lib/ai/gemini';
 import { generateInsights } from '@/lib/insights';
 import { storage } from '@/lib/storage';
 import { emitWebhookEvent } from '@/lib/webhooks';
+import { notifyUser } from '@/lib/notifications';
 import { getUsageSummary } from '@/lib/usage';
 import { addChunks } from '@/lib/vector-store';
 
@@ -81,6 +82,7 @@ export const processDocument = async (fileId: string, key: string) => {
                 suggestions: insights?.suggestions ?? undefined,
             },
         });
+        if (file.userId) void notifyUser(file.userId, 'ready', file.name, fileId);
         if (file.userId)
             void emitWebhookEvent(file.userId, 'document.ready', {
                 document: { id: fileId, name: file.name, status: 'SUCCESS', pages: pages.length, usedOcr, summary: insights?.summary ?? null },
@@ -89,6 +91,7 @@ export const processDocument = async (fileId: string, key: string) => {
         console.error(`Processing failed for file ${fileId}:`, err);
         const reason = err instanceof UserFacingError ? err.message : 'Processing failed. Please try again.';
         const failed = await db.file.update({ where: { id: fileId }, data: { uploadStatus: 'FAILED', failureReason: reason } });
+        if (failed.userId) void notifyUser(failed.userId, 'failed', failed.name, fileId, reason);
         if (failed.userId)
             void emitWebhookEvent(failed.userId, 'document.failed', { document: { id: fileId, name: failed.name, status: 'FAILED', error: reason } });
     }
