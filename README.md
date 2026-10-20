@@ -32,6 +32,8 @@ Chat with your PDFs. Upload a document, ask questions in plain language, and get
    GROQ_API_KEY=<from console.groq.com>
    ```
 
+   Optional: `STRIPE_SECRET_KEY`, `STRIPE_PRO_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` (billing) and `RESEND_API_KEY`, `EMAIL_FROM` (emails; without them, links are printed to the server console).
+
 4. Apply migrations (the Prisma CLI reads `.env`, so pass the URL inline or copy it there):
 
    ```bash
@@ -43,6 +45,12 @@ Chat with your PDFs. Upload a document, ask questions in plain language, and get
    ```bash
    npm run dev
    ```
+
+## Scripts
+
+- `npm run dev`: start the dev server
+- `npm test`: run unit tests
+- `npm run build`: production build
 
 ## How it works
 
@@ -59,6 +67,8 @@ Create a key under **API** in the dashboard and send it as `Authorization: Beare
 
 - `GET /api/v1/documents`
 - `GET /api/v1/usage`
+- `POST /api/v1/documents` (multipart `file`) to upload a PDF
+- `GET /api/v1/openapi.json` for the full spec
 - `POST /api/v1/chat` with `{ "document_id": "...", "message": "..." }`
 
 ## Learn more
