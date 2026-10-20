@@ -76,12 +76,12 @@ export function TokenChart() {
     const total = (data ?? []).reduce((sum, d) => sum + d.tokens, 0);
 
     return (
-        <section className='rounded-2xl bg-white p-5 shadow-sm ring-1 ring-zinc-950/5 lg:col-span-2'>
+        <section className='flex flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-zinc-950/5 lg:col-span-2'>
             <div className='flex items-baseline justify-between'>
                 <h2 className='font-semibold text-zinc-900'>Token usage</h2>
                 <span className='text-sm text-zinc-500'>Last 7 days · {total.toLocaleString()} tokens</span>
             </div>
-            <div className='relative mt-6 h-44'>
+            <div className='relative mt-6 min-h-[11rem] flex-1'>
                 <div className='absolute inset-x-0 top-0 flex h-[calc(100%-1.5rem)] flex-col justify-between'>
                     {[0, 1, 2, 3].map((i) => (
                         <div key={i} className='border-t border-dashed border-zinc-200' />
