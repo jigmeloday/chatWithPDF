@@ -1,6 +1,6 @@
 import { addMonths, differenceInCalendarDays, subMonths } from 'date-fns';
 import { db } from '@/db';
-import { PLANS, Plan } from '@/config/plans';
+import { PLANS, Plan, planForPriceId } from '@/config/plans';
 
 export interface UsageSummary {
     plan: Plan;
@@ -22,7 +22,7 @@ export const getBillingPeriod = (
     const end = user.stripeCurrentPeriodEnd;
 
     if (user.stripePriceId && end && end > now) {
-        return { plan: PLANS.pro, start: subMonths(end, 1), end };
+        return { plan: planForPriceId(user.stripePriceId) ?? PLANS.pro, start: subMonths(end, 1), end };
     }
 
     let start = user.createdAt;

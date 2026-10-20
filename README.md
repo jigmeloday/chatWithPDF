@@ -32,7 +32,7 @@ Chat with your PDFs. Upload a document, ask questions in plain language, and get
    GROQ_API_KEY=<from console.groq.com>
    ```
 
-   Optional: `STRIPE_SECRET_KEY`, `STRIPE_PRO_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` (billing) and `RESEND_API_KEY`, `EMAIL_FROM` (emails; without them, links are printed to the server console).
+   Optional: `STRIPE_SECRET_KEY`, `STRIPE_PRO_PRICE_ID`, `STRIPE_BUSINESS_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` (billing) and `RESEND_API_KEY`, `EMAIL_FROM` (emails; without them, links are printed to the server console).
 
 4. Apply migrations (the Prisma CLI reads `.env`, so pass the URL inline or copy it there):
 

@@ -69,7 +69,7 @@ export function SidebarUsage() {
     const pct = Math.min(100, (data.tokensUsed / data.tokenLimit) * 100);
     return (
         <Link
-            href={data.plan.slug === 'free' ? '/pricing' : '/dashboard'}
+            href={data.plan.slug === 'business' ? '/dashboard' : '/pricing'}
             className='block rounded-xl bg-zinc-50 p-3 ring-1 ring-zinc-950/5 transition hover:bg-zinc-100'>
             <div className='flex items-center justify-between text-xs'>
                 <span className='font-medium text-zinc-700'>{data.plan.name} plan</span>
@@ -84,8 +84,8 @@ export function SidebarUsage() {
             <p className='mt-1.5 text-xs text-zinc-500'>
                 {Math.round(pct)}% of tokens used
             </p>
-            {data.plan.slug === 'free' && (
-                <span className='mt-2 block text-xs font-medium text-green-700'>Upgrade to Pro →</span>
+            {data.plan.slug !== 'business' && (
+                <span className='mt-2 block text-xs font-medium text-green-700'>Upgrade plan →</span>
             )}
         </Link>
     );

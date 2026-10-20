@@ -2,7 +2,8 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Eye, EyeOff, FileText, Loader2, MessageCircle, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import AuthShell from '@/components/auth/auth-shell';
 import { authClient } from '@/lib/auth-client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,11 +12,6 @@ interface AuthFormProps {
     mode: 'sign-in' | 'sign-up';
 }
 
-const HIGHLIGHTS = [
-    { icon: FileText, text: 'Upload any PDF in seconds' },
-    { icon: MessageCircle, text: 'Ask questions in plain language' },
-    { icon: Sparkles, text: 'Get answers grounded in your document' },
-];
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
     return (
@@ -65,31 +61,8 @@ function AuthForm({ mode }: AuthFormProps) {
     };
 
     return (
-        <div className='grid min-h-[calc(100vh-3.5rem)] lg:grid-cols-2'>
-            <aside className='hidden flex-col justify-center gap-8 bg-gradient-to-br from-green-600 to-green-900 px-16 text-white lg:flex'>
-                <div>
-                    <h2 className='text-4xl font-bold leading-tight'>
-                        Chat with your documents.
-                    </h2>
-                    <p className='mt-3 max-w-md text-green-100'>
-                        DocuChatty turns any PDF into a conversation, so you find what
-                        you need without scrolling through pages.
-                    </p>
-                </div>
-                <ul className='flex flex-col gap-4'>
-                    {HIGHLIGHTS.map(({ icon: Icon, text }) => (
-                        <li key={text} className='flex items-center gap-3'>
-                            <span className='flex h-9 w-9 items-center justify-center rounded-lg bg-white/15'>
-                                <Icon className='h-5 w-5' />
-                            </span>
-                            {text}
-                        </li>
-                    ))}
-                </ul>
-            </aside>
-
-            <main className='flex items-center justify-center px-4 py-12'>
-                <div className='w-full max-w-sm'>
+        <AuthShell>
+            <div className='w-full max-w-sm'>
                     <h1 className='text-3xl font-bold tracking-tight'>
                         {isSignUp ? 'Create your account' : 'Welcome back'}
                     </h1>
@@ -183,9 +156,8 @@ function AuthForm({ mode }: AuthFormProps) {
                             {isSignUp ? 'Sign in' : 'Create an account'}
                         </Link>
                     </p>
-                </div>
-            </main>
-        </div>
+            </div>
+        </AuthShell>
     );
 }
 

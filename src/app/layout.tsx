@@ -42,11 +42,11 @@ export default async function RootLayout({
         {user ? (
           <AppShell user={user}>{children}</AppShell>
         ) : (
-          <>
+          <div className='flex min-h-screen flex-col'>
             <NavBar />
-            {children}
+            <div className='flex flex-1 flex-col'>{children}</div>
             <Footer />
-          </>
+          </div>
         )}
         </body>
       </Provider>

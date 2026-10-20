@@ -5,7 +5,7 @@ import { AlertTriangle, ArrowRight, FileText, KeyRound, MessageSquare, Sparkles,
 import { trpc } from '@/app/_trpc/client';
 import UploadButton from '@/components/upload-button';
 import BillingButton from '@/components/billing-button';
-import { PLANS } from '@/config/plans';
+import { nextPlan } from '@/config/plans';
 import { cn } from '@/lib/utils';
 
 const tileClass =
@@ -112,28 +112,32 @@ export function TokenChart() {
 
 export function PlanCard() {
     const { data } = trpc.getUsage.useQuery();
-    const isFree = !data || data.plan.slug === 'free';
-    const pro = PLANS.pro;
+    const next = data ? nextPlan(data.plan.slug) : undefined;
+    const target = next ?? data?.plan;
 
     return (
         <section className='rounded-2xl bg-gradient-to-br from-green-50 to-white p-5 shadow-sm ring-1 ring-green-600/15'>
             <div className='flex items-center gap-2 text-green-700'>
                 <Sparkles className='h-4 w-4' />
-                <h2 className='font-semibold'>{isFree ? `Upgrade to ${pro.name}` : `You're on ${pro.name}`}</h2>
+                <h2 className='font-semibold'>{next ? `Upgrade to ${next.name}` : `You're on ${data?.plan.name ?? '…'}`}</h2>
             </div>
-            <ul className='mt-4 space-y-2 text-sm text-zinc-700'>
-                <li>{pro.tokensPerMonth.toLocaleString()} tokens every month</li>
-                <li>Up to {pro.maxDocuments} documents</li>
-                <li>${pro.price}/month, cancel anytime</li>
-            </ul>
-            {isFree ? (
-                <BillingButton action='checkout' className='mt-5 w-full'>
-                    Upgrade to Pro
+            {target && (
+                <ul className='mt-4 space-y-2 text-sm text-zinc-700'>
+                    <li>{target.tokensPerMonth.toLocaleString()} tokens every month</li>
+                    <li>Up to {target.maxDocuments} documents</li>
+                    <li>{target.price ? `$${target.price}/month, cancel anytime` : 'Free forever'}</li>
+                </ul>
+            )}
+            {next ? (
+                <BillingButton action='checkout' plan={next.slug as 'pro' | 'business'} className='mt-5 w-full'>
+                    Upgrade to {next.name}
                 </BillingButton>
             ) : (
-                <BillingButton action='portal' variant='outline' className='mt-5 w-full'>
-                    Manage billing
-                </BillingButton>
+                data && data.plan.slug !== 'free' && (
+                    <BillingButton action='portal' variant='outline' className='mt-5 w-full'>
+                        Manage billing
+                    </BillingButton>
+                )
             )}
         </section>
     );

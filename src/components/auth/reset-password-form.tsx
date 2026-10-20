@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
+import AuthShell from '@/components/auth/auth-shell';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -27,7 +28,8 @@ function ResetPasswordForm() {
     };
 
     return (
-        <div className='mx-auto mt-24 w-full max-w-sm px-4'>
+        <AuthShell>
+        <div className='w-full max-w-sm'>
             <h1 className='text-3xl font-bold tracking-tight'>Choose a new password</h1>
             {!token || params.get('error') ? (
                 <p className='mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700'>
@@ -45,6 +47,7 @@ function ResetPasswordForm() {
                 </form>
             )}
         </div>
+        </AuthShell>
     );
 }
 

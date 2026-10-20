@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Check } from 'lucide-react';
 import { getSessionUser } from '@/lib/auth';
 import { getUsageSummary } from '@/lib/usage';
-import { PLANS } from '@/config/plans';
+import { PLANS, PLAN_ORDER } from '@/config/plans';
 import { buttonVariants } from '@/components/ui/button';
 import BillingButton from '@/components/billing-button';
 import { cn } from '@/lib/utils';
@@ -14,7 +14,7 @@ async function Page() {
     const current = user ? (await getUsageSummary(user.id)).plan.slug : null;
 
     return (
-        <main className='mx-auto max-w-5xl px-4 py-16 md:py-20'>
+        <main className='mx-auto max-w-6xl px-4 py-16 md:py-20'>
             <div className='text-center'>
                 <p className='text-sm font-medium text-green-700'>Pricing</p>
                 <h1 className='mt-2 text-4xl font-bold tracking-tight md:text-5xl'>Simple plans, no surprises</h1>
@@ -23,9 +23,12 @@ async function Page() {
                 </p>
             </div>
 
-            <div className='mt-12 grid gap-6 md:grid-cols-2'>
-                {Object.values(PLANS).map((plan) => {
+            <div className='mt-12 grid gap-6 lg:grid-cols-3'>
+                {PLAN_ORDER.map((slug) => {
+                    const plan = PLANS[slug];
                     const isPro = plan.slug === 'pro';
+                    const rank = PLAN_ORDER.indexOf(slug);
+                    const currentRank = current ? PLAN_ORDER.indexOf(current) : -1;
                     return (
                         <section
                             key={plan.slug}
@@ -54,12 +57,14 @@ async function Page() {
                             <div className='mt-8'>
                                 {current === plan.slug ? (
                                     <span className={cn(buttonVariants({ variant: 'outline' }), 'w-full cursor-default')}>Your current plan</span>
-                                ) : isPro && current === 'free' ? (
-                                    <BillingButton action='checkout' className='w-full'>Upgrade to Pro</BillingButton>
                                 ) : !user ? (
                                     <Link href='/sign-up' className={cn(buttonVariants({ variant: isPro ? 'default' : 'outline' }), 'w-full')}>
-                                        {isPro ? 'Get started with Pro' : 'Start for free'}
+                                        {plan.price === 0 ? 'Start for free' : `Get started with ${plan.name}`}
                                     </Link>
+                                ) : rank > currentRank && plan.slug !== 'free' ? (
+                                    <BillingButton action='checkout' plan={plan.slug as 'pro' | 'business'} variant={isPro ? 'default' : 'outline'} className='w-full'>
+                                        Upgrade to {plan.name}
+                                    </BillingButton>
                                 ) : (
                                     <Link href='/settings' className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}>Manage in settings</Link>
                                 )}

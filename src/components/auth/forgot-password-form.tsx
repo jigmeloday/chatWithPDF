@@ -3,6 +3,7 @@ import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
+import AuthShell from '@/components/auth/auth-shell';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -21,7 +22,8 @@ function ForgotPasswordForm() {
     };
 
     return (
-        <div className='mx-auto mt-24 w-full max-w-sm px-4'>
+        <AuthShell>
+        <div className='w-full max-w-sm'>
             <h1 className='text-3xl font-bold tracking-tight'>Reset your password</h1>
             {sent ? (
                 <p className='mt-4 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-900'>
@@ -39,10 +41,11 @@ function ForgotPasswordForm() {
                     </form>
                 </>
             )}
-            <Link href='/sign-in' className='mt-6 block text-sm text-green-700 hover:underline'>
+            <Link href='/sign-in' className='mt-8 block text-sm text-green-700 hover:underline'>
                 Back to sign in
             </Link>
         </div>
+        </AuthShell>
     );
 }
 
