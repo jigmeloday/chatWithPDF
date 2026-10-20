@@ -17,11 +17,7 @@ function NavBar() {
                             <Link className={buttonVariants({
                                 variant: 'ghost',
                                 size: 'sm'
-                            })} href='/price' >Pricing </Link>
-                            <Link className={buttonVariants({
-                                variant: 'ghost',
-                                size: 'sm'
-                            })} href='/price' >Price </Link>
+                            })} href='/pricing' >Pricing</Link>
                             <Link href='/sign-in'
                                 className={buttonVariants({
                                 variant: 'ghost',

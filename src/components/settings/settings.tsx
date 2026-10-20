@@ -7,6 +7,7 @@ import { authClient } from '@/lib/auth-client';
 import { trpc } from '@/app/_trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import BillingButton from '@/components/billing-button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 
@@ -99,6 +100,15 @@ function Settings({ name, email }: { name: string; email: string }) {
                     </dl>
                 ) : (
                     <p className='text-sm text-zinc-500'>Loading…</p>
+                )}
+                {usage && (
+                    <div className='mt-5'>
+                        {usage.plan.slug === 'free' ? (
+                            <BillingButton action='checkout'>Upgrade to Pro</BillingButton>
+                        ) : (
+                            <BillingButton action='portal' variant='outline'>Manage billing</BillingButton>
+                        )}
+                    </div>
                 )}
             </Section>
 

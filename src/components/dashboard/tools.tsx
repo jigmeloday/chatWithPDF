@@ -4,6 +4,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { AlertTriangle, ArrowRight, FileText, KeyRound, MessageSquare, Sparkles, UploadCloud } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
 import UploadButton from '@/components/upload-button';
+import BillingButton from '@/components/billing-button';
 import { PLANS } from '@/config/plans';
 import { cn } from '@/lib/utils';
 
@@ -125,12 +126,14 @@ export function PlanCard() {
                 <li>Up to {pro.maxDocuments} documents</li>
                 <li>${pro.price}/month, cancel anytime</li>
             </ul>
-            {isFree && (
-                <button
-                    disabled
-                    className='mt-5 w-full cursor-not-allowed rounded-md bg-green-600/60 px-4 py-2 text-sm font-medium text-white'>
-                    Upgrade (coming soon)
-                </button>
+            {isFree ? (
+                <BillingButton action='checkout' className='mt-5 w-full'>
+                    Upgrade to Pro
+                </BillingButton>
+            ) : (
+                <BillingButton action='portal' variant='outline' className='mt-5 w-full'>
+                    Manage billing
+                </BillingButton>
             )}
         </section>
     );
