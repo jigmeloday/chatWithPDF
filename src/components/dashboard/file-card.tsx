@@ -34,6 +34,7 @@ export interface FileCardData {
     name: string;
     createdAt: string | Date;
     uploadStatus: string;
+    usedOcr?: boolean;
 }
 
 interface FileCardProps {
@@ -130,7 +131,10 @@ function FileCard({ file, view = 'grid' }: FileCardProps) {
                             </div>
                         </div>
                         <div className='flex items-center justify-between'>
-                            {pill}
+                            <span className='flex items-center gap-1.5'>
+                                {pill}
+                                {file.usedOcr && <span title='Scanned PDF read with OCR' className='rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600'>OCR</span>}
+                            </span>
                             <span className='flex items-center gap-1 text-sm font-medium text-green-700 opacity-0 transition group-hover:opacity-100'>
                                 Open <ArrowUpRight className='h-4 w-4' />
                             </span>

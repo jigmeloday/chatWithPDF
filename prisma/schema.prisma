@@ -52,6 +52,10 @@ model File {
   User         User?           @relation(fields: [userId], references: [id])
   userId       String?
   failureReason String?
+  usedOcr       Boolean         @default(false)
+  summary       String?         @db.Text
+  keyPoints     Json?
+  suggestions   Json?
 }
 
 model Message {

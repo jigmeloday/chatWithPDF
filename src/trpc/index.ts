@@ -94,8 +94,26 @@ export const appRouter = router({
             where: {
                 userId,
             },
+            select: { id: true, name: true, uploadStatus: true, createdAt: true, usedOcr: true },
         })
     }),
+    getFileInsights: privateProcedure
+        .input(z.object({ fileId: z.string() }))
+        .query(async ({ ctx, input }) => {
+            const file = await db.file.findFirst({
+                where: { id: input.fileId, userId: ctx.userId },
+                select: { summary: true, keyPoints: true, suggestions: true, usedOcr: true },
+            })
+            if ( !file ) throw new TRPCError({ code: 'NOT_FOUND' })
+
+            const list = (v: unknown) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [])
+            return {
+                summary: file.summary,
+                keyPoints: list(file.keyPoints),
+                suggestions: list(file.suggestions),
+                usedOcr: file.usedOcr,
+            }
+        }),
     getFile: privateProcedure
         .input(z.object({ key: z.string() }))
         .mutation(async ({ ctx, input }) => {
