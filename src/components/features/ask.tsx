@@ -29,7 +29,10 @@ function AskAi() {
     const { data: chats } = trpc.listChats.useQuery();
     const { data: chat } = trpc.getChatMessages.useQuery({ chatId: chatId ?? '' }, { enabled: !!chatId });
     const { mutate: deleteChat } = trpc.deleteChat.useMutation({
-        onSuccess: () => utils.listChats.invalidate(),
+        onSuccess: () => {
+            utils.listChats.invalidate();
+            toast({ title: 'Chat deleted' });
+        },
     });
     const { mutate: saveAnswer } = trpc.saveAnswer.useMutation({
         onSuccess: () => toast({ title: 'Saved', description: 'Find it under Saved in the sidebar.' }),

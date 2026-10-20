@@ -5,6 +5,7 @@ import { Check, Copy, KeyRound, Loader2, Trash } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 const ENDPOINTS = [
     { method: 'GET', path: '/api/v1/documents', desc: 'List your documents and their processing status.' },
@@ -48,6 +49,7 @@ function NewKeyBanner({ value }: { value: string }) {
 }
 
 function Developers() {
+    const { toast } = useToast();
     const [name, setName] = useState('');
     const [newKey, setNewKey] = useState<string | null>(null);
     const [baseUrl, setBaseUrl] = useState('https://your-domain.com');
@@ -55,15 +57,19 @@ function Developers() {
     const utils = trpc.useContext();
     const { data: keys, isLoading } = trpc.listApiKeys.useQuery();
 
-    const { mutate: createKey, isLoading: creating, error } = trpc.createApiKey.useMutation({
+    const { mutate: createKey, isLoading: creating } = trpc.createApiKey.useMutation({
         onSuccess: ({ key }) => {
             setNewKey(key);
             setName('');
             utils.listApiKeys.invalidate();
+            toast({ title: 'API key created', description: 'Copy it now. You won’t be able to see it again.' });
         },
     });
     const { mutate: revokeKey, variables, isLoading: revoking } = trpc.revokeApiKey.useMutation({
-        onSuccess: () => utils.listApiKeys.invalidate(),
+        onSuccess: () => {
+            utils.listApiKeys.invalidate();
+            toast({ title: 'API key revoked', description: 'Requests using it will now be rejected.' });
+        },
     });
 
     const onSubmit = (e: FormEvent) => {
@@ -96,7 +102,6 @@ function Developers() {
                         Create key
                     </Button>
                 </form>
-                {error && <p className='mt-2 text-sm text-red-600'>{error.message}</p>}
                 {newKey && <div className='mt-4'><NewKeyBanner value={newKey} /></div>}
 
                 <ul className='mt-4 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white shadow-sm'>

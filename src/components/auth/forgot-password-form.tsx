@@ -3,11 +3,14 @@ import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
+import { friendlyError } from '@/lib/errors';
+import { useToast } from '@/hooks/use-toast';
 import AuthShell from '@/components/auth/auth-shell';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 function ForgotPasswordForm() {
+    const { toast } = useToast();
     const [sent, setSent] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -15,8 +18,14 @@ function ForgotPasswordForm() {
         e.preventDefault();
         const email = String(new FormData(e.currentTarget).get('email'));
         setLoading(true);
-        await authClient.requestPasswordReset({ email, redirectTo: '/reset-password' });
+        const { error } = await authClient.requestPasswordReset({ email, redirectTo: '/reset-password' });
         setLoading(false);
+        // Rate limits and network errors are worth telling the user about; "no such account" is never revealed.
+        if (error?.status === 429 || (error && !error.status)) {
+            toast({ title: 'Could not send the reset link', description: friendlyError(error.message, 'Please try again in a minute.'), variant: 'destructive' });
+            return;
+        }
+        toast({ title: 'Check your inbox', description: 'If an account exists for that email, a reset link is on its way.' });
         // Same message whether or not the account exists, so emails can't be probed.
         setSent(true);
     };

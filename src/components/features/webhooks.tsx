@@ -57,15 +57,26 @@ function Webhooks() {
     const [testingId, setTestingId] = useState<string | null>(null);
 
     const refresh = () => utils.listWebhooks.invalidate();
-    const { mutate: create, isLoading: creating, error } = trpc.createWebhook.useMutation({
+    const { mutate: create, isLoading: creating } = trpc.createWebhook.useMutation({
         onSuccess: ({ secret }) => {
             setSecret(secret);
             setUrl('');
             refresh();
+            toast({ title: 'Endpoint added', description: 'Copy the signing secret below. It is only shown once.' });
         },
     });
-    const { mutate: setActive } = trpc.setWebhookActive.useMutation({ onSuccess: refresh });
-    const { mutate: remove } = trpc.deleteWebhook.useMutation({ onSuccess: refresh });
+    const { mutate: setActive } = trpc.setWebhookActive.useMutation({
+        onSuccess: (_d, v) => {
+            refresh();
+            toast({ title: v.active ? 'Endpoint resumed' : 'Endpoint paused' });
+        },
+    });
+    const { mutate: remove } = trpc.deleteWebhook.useMutation({
+        onSuccess: () => {
+            refresh();
+            toast({ title: 'Endpoint deleted' });
+        },
+    });
     const { mutateAsync: test } = trpc.testWebhook.useMutation();
 
     const onSubmit = (e: FormEvent) => {
@@ -127,7 +138,6 @@ function Webhooks() {
                     <Button type='submit' disabled={creating || !events.length}>
                         {creating && <Loader2 className='mr-2 h-4 w-4 animate-spin' />} Add endpoint
                     </Button>
-                    {error && <p className='text-sm text-red-600'>{error.message}</p>}
                 </form>
                 {secret && <div className='mt-4'><SecretBanner secret={secret} /></div>}
             </section>

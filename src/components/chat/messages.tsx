@@ -28,7 +28,10 @@ function Messages({ fileId }: { fileId: string }) {
     const endRef = useRef<HTMLDivElement>(null)
     const utils = trpc.useContext()
     const { mutate: clear, isLoading: clearing } = trpc.clearMessages.useMutation({
-        onSuccess: () => utils.getMessages.invalidate({ fileId }),
+        onSuccess: () => {
+            utils.getMessages.invalidate({ fileId })
+            toast({ title: 'Conversation cleared' })
+        },
     })
 
     useEffect(() => {

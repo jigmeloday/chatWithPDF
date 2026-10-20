@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import AuthShell from '@/components/auth/auth-shell';
 import { authClient } from '@/lib/auth-client';
+import { friendlyError } from '@/lib/errors';
+import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -24,8 +26,8 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function AuthForm({ mode }: AuthFormProps) {
     const router = useRouter();
+    const { toast } = useToast();
     const origin = useSearchParams().get('origin');
-    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [verifyEmail, setVerifyEmail] = useState<string | null>(null);
@@ -39,7 +41,6 @@ function AuthForm({ mode }: AuthFormProps) {
         const password = String(form.get('password'));
         const name = String(form.get('name') ?? '');
 
-        setError(null);
         setLoading(true);
         const { error } = isSignUp
             ? await authClient.signUp.email({ email, password, name })
@@ -47,15 +48,21 @@ function AuthForm({ mode }: AuthFormProps) {
         setLoading(false);
 
         if (error) {
-            setError(error.message ?? 'Something went wrong');
+            toast({
+                title: isSignUp ? 'Could not create your account' : 'Could not sign you in',
+                description: friendlyError(error.message),
+                variant: 'destructive',
+            });
             return;
         }
 
         // With email verification on, sign-up doesn't start a session until the link is clicked.
         if (isSignUp && !(await authClient.getSession()).data) {
             setVerifyEmail(email);
+            toast({ title: 'Check your inbox', description: `We sent a verification link to ${email}.` });
             return;
         }
+        toast({ title: isSignUp ? 'Account created' : 'Welcome back' });
         router.push(`/auth-callback${query}`);
         router.refresh();
     };
@@ -131,14 +138,6 @@ function AuthForm({ mode }: AuthFormProps) {
                             <Link href='/forgot-password' className='-mt-2 self-end text-sm text-green-700 hover:underline'>
                                 Forgot password?
                             </Link>
-                        )}
-
-                        {error && (
-                            <p
-                                role='alert'
-                                className='rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700'>
-                                {error}
-                            </p>
                         )}
 
                         <Button type='submit' size='lg' disabled={loading} className='mt-2'>

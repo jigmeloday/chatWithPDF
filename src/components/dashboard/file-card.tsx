@@ -21,6 +21,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 export const STATUS_STYLES: Record<string, { label: string; pill: string; dot: string }> = {
     SUCCESS: { label: 'Ready', pill: 'bg-green-50 text-green-700 ring-green-600/20', dot: 'bg-green-500' },
@@ -43,6 +44,7 @@ interface FileCardProps {
 }
 
 function FileCard({ file, view = 'grid' }: FileCardProps) {
+    const { toast } = useToast();
     const [confirming, setConfirming] = useState(false);
     const [renaming, setRenaming] = useState(false);
     const [newName, setNewName] = useState(file.name);
@@ -53,16 +55,21 @@ function FileCard({ file, view = 'grid' }: FileCardProps) {
             utils.getUsage.invalidate();
             utils.getActivity.invalidate();
             setConfirming(false);
+            toast({ title: 'Document deleted', description: `“${file.name}” and its chats were removed.` });
         },
     });
     const { mutate: renameFile, isLoading: isRenaming } = trpc.renameFile.useMutation({
         onSuccess: () => {
             utils.getUserFiles.invalidate();
             setRenaming(false);
+            toast({ title: 'Document renamed' });
         },
     });
     const { mutate: retryFile } = trpc.retryFile.useMutation({
-        onSuccess: () => utils.getUserFiles.invalidate(),
+        onSuccess: () => {
+            utils.getUserFiles.invalidate();
+            toast({ title: 'Reprocessing started', description: 'We’ll update the status when it finishes.' });
+        },
     });
     const status = STATUS_STYLES[file.uploadStatus] ?? STATUS_STYLES.PENDING;
     const created = new Date(file.createdAt);

@@ -31,10 +31,14 @@ function SavedCard({ item }: { item: SavedItem }) {
         onSuccess: () => {
             utils.listSaved.invalidate();
             setEditing(false);
+            toast({ title: 'Note saved' });
         },
     });
     const { mutate: remove, isLoading: removing } = trpc.deleteSaved.useMutation({
-        onSuccess: () => utils.listSaved.invalidate(),
+        onSuccess: () => {
+            utils.listSaved.invalidate();
+            toast({ title: 'Removed from saved' });
+        },
     });
 
     const copy = async () => {
