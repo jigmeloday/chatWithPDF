@@ -8,9 +8,21 @@ import { Input } from '@/components/ui/input';
 
 const ENDPOINTS = [
     { method: 'GET', path: '/api/v1/documents', desc: 'List your documents and their processing status.' },
+    { method: 'POST', path: '/api/v1/documents', desc: 'Upload a PDF (multipart form, field "file").' },
+    { method: 'GET', path: '/api/v1/documents/{id}', desc: 'Status, failure reason and passage count for one document.' },
+    { method: 'DELETE', path: '/api/v1/documents/{id}', desc: 'Delete a document, its index and its conversation.' },
+    { method: 'GET', path: '/api/v1/documents/{id}/messages', desc: 'The stored conversation, oldest first.' },
+    { method: 'DELETE', path: '/api/v1/documents/{id}/messages', desc: 'Clear the conversation.' },
+    { method: 'POST', path: '/api/v1/chat', desc: 'Ask a question. Returns the answer, cited sources and token usage.' },
     { method: 'GET', path: '/api/v1/usage', desc: 'Tokens, documents and days left in the current period.' },
-    { method: 'POST', path: '/api/v1/documents', desc: 'Upload a PDF (multipart form, field "file"). Poll the list until it is SUCCESS.' },
-    { method: 'POST', path: '/api/v1/chat', desc: 'Ask a question about a document and get an answer with token usage.' },
+];
+
+const CHAT_OPTIONS = [
+    ['stream', 'Stream the answer as server-sent events.'],
+    ['history', 'Use earlier messages as context (default true).'],
+    ['store', 'Save the exchange to the conversation (default true).'],
+    ['max_sources', 'How many passages to retrieve, 1 to 10 (default 5).'],
+    ['instructions', 'Extra instructions such as tone, language or format.'],
 ];
 
 function NewKeyBanner({ value }: { value: string }) {
@@ -137,11 +149,28 @@ function Developers() {
                         OpenAPI spec
                     </a>
                 </p>
-                <ul className='mt-6 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white shadow-sm'>
+                <h3 className='mt-8 font-semibold text-zinc-900'>Asking a question</h3>
+                <pre className='mt-3 overflow-x-auto rounded-xl bg-zinc-900 p-4 text-sm text-zinc-100'>
+{`curl ${baseUrl}/api/v1/chat \\
+  -H "Authorization: Bearer dc_live_..." \\
+  -H "Content-Type: application/json" \\
+  -d '{ "document_id": "...", "message": "What is the refund policy?" }'
+
+{ "answer": "Refunds are available within 30 days (p. 1).",
+  "sources": [{ "page": 1, "snippet": "..." }],
+  "usage": { "input_tokens": 201, "output_tokens": 46, "total_tokens": 247 } }`}
+                </pre>
+                <ul className='mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2'>
+                    {CHAT_OPTIONS.map(([name, desc]) => (
+                        <li key={name}><code className='rounded bg-zinc-100 px-1.5 py-0.5 text-xs'>{name}</code> <span className='text-zinc-500'>{desc}</span></li>
+                    ))}
+                </ul>
+                <h3 className='mt-8 font-semibold text-zinc-900'>Endpoints</h3>
+                <ul className='mt-3 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white shadow-sm'>
                     {ENDPOINTS.map((e) => (
                         <li key={e.path} className='flex flex-col gap-1 p-4 sm:flex-row sm:items-center sm:gap-4'>
                             <span className='flex items-center gap-2'>
-                                <span className='w-14 rounded bg-zinc-100 px-2 py-0.5 text-center text-xs font-semibold text-zinc-700'>
+                                <span className='w-16 rounded bg-zinc-100 px-2 py-0.5 text-center text-xs font-semibold text-zinc-700'>
                                     {e.method}
                                 </span>
                                 <code className='text-sm'>{e.path}</code>

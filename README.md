@@ -69,11 +69,12 @@ Token usage from Groq is saved on every answer and drives the plan limits shown 
 
 Create a key under **API** in the dashboard and send it as `Authorization: Bearer dc_live_...`.
 
-- `GET /api/v1/documents`
-- `GET /api/v1/usage`
-- `POST /api/v1/documents` (multipart `file`) to upload a PDF
-- `GET /api/v1/openapi.json` for the full spec
-- `POST /api/v1/chat` with `{ "document_id": "...", "message": "..." }`
+- `GET/POST /api/v1/documents`: list or upload (multipart `file`)
+- `GET/DELETE /api/v1/documents/{id}`: details or delete
+- `GET/DELETE /api/v1/documents/{id}/messages`: read or clear the conversation
+- `POST /api/v1/chat`: ask a question. Options: `stream` (server-sent events), `history`, `store`, `max_sources`, `instructions`. Returns the answer, cited `sources` and token `usage`
+- `GET /api/v1/usage`: plan usage
+- `GET /api/v1/openapi.json`: the full spec
 
 ## Learn more
 
