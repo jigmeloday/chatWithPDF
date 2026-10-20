@@ -1,68 +1,64 @@
 'use client';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Button } from '@/components/ui/button';
 import Dropzone from 'react-dropzone';
-import { Cloud, File, Loader2 } from 'lucide-react';
+import { Cloud, File as FileIcon, Loader2 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { useUploadThing } from '@/lib/uploadthing';
 import { useToast } from '@/hooks/use-toast';
 import { trpc } from '@/app/_trpc/client';
 import { useRouter } from 'next/navigation';
 
+const MAX_SIZE = 4 * 1024 * 1024;
+
+// fetch has no upload progress events, so use XHR.
+const uploadPdf = (file: File, onProgress: (pct: number) => void) =>
+    new Promise<{ id: string }>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/upload');
+        xhr.upload.onprogress = (e) => e.lengthComputable && onProgress((e.loaded / e.total) * 100);
+        xhr.onload = () => {
+            const body = JSON.parse(xhr.responseText || '{}');
+            xhr.status >= 200 && xhr.status < 300 ? resolve(body) : reject(new Error(body.error ?? 'Upload failed'));
+        };
+        xhr.onerror = () => reject(new Error('Network error'));
+        const form = new FormData();
+        form.append('file', file);
+        xhr.send(form);
+    });
+
 const UploadDropzone = () => {
     const router = useRouter()
+    const utils = trpc.useContext()
     const [isUploading, setIsUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const { toast } = useToast();
-    const { startUpload } = useUploadThing('pdfUploader')
-    const { mutate: startPolling } = trpc.getFile.useMutation({
-        onSuccess: (file) => {
-            router.push(`/dashboard/${file.id}`)
-        },
-        retry: true,
-        retryDelay: 500,
-    })
-    const startSimulatedProgress = () => {
-        setUploadProgress(0)
-        const interval = setInterval(() => {
-            setUploadProgress((prev) => {
-                if ( prev >= 95) {
-                    clearInterval(interval)
-                    return prev
-                }
-                return prev + 5;
-            })
-        },  500)
-        return interval
-    }
+
+    const fail = (description: string) =>
+        toast({ title: 'Upload failed', description, variant: 'destructive' })
 
     return (
-        <Dropzone multiple={ false } onDrop={ async ( drop ) => {
-            setIsUploading(true)
-            const progressInterval = startSimulatedProgress();
-            const res = await startUpload(drop);
-            if ( !res ) {
-                return(toast({
-                    title: 'Something went wrong',
-                    description: 'Please try again later',
-                    variant: 'destructive'}
-                ))
-            }
-            const [fileResponse] = res;
-            const key = fileResponse?.key;
-            if ( !key ) {
-                return(toast({
-                    title: 'Something went wrong',
-                    description: 'Please try again later',
-                    variant: 'destructive'}
-                ))
-            }
-
-            clearInterval(progressInterval)
-            setUploadProgress(100)
-            startPolling({ key })
-        }}>
+        <Dropzone
+            multiple={ false }
+            accept={ { 'application/pdf': ['.pdf'] } }
+            maxSize={ MAX_SIZE }
+            disabled={ isUploading }
+            onDropRejected={ () => fail('Please choose a PDF that is 4MB or smaller.') }
+            onDrop={ async ( drop ) => {
+                if ( !drop[ 0 ] ) return
+                setIsUploading(true)
+                setUploadProgress(0)
+                try {
+                    const { id } = await uploadPdf(drop[ 0 ], setUploadProgress)
+                    utils.getUserFiles.invalidate()
+                    utils.getUsage.invalidate()
+                    utils.getActivity.invalidate()
+                    router.push(`/dashboard/${id}`)
+                } catch ( err ) {
+                    fail(err instanceof Error ? err.message : 'Please try again later')
+                    setIsUploading(false)
+                }
+            }}>
             { ( { getRootProps, getInputProps, acceptedFiles } ) => (
                 <div  { ...getRootProps() } className='border h-64 m-4 border-dashed border-gray-300 rounded-lg'>
                     <div className='flex items-center justify-center h-full w-full'>
@@ -82,7 +78,7 @@ const UploadDropzone = () => {
                                     <div
                                         className='max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200'>
                                         <div className='px-3 py-2 h-full grid place-item-center'>
-                                            <File className='h-4 w-4 text-green-500' />
+                                            <FileIcon className='h-4 w-4 text-green-500' />
                                         </div>
                                         <div className='px-3 py-2 h-full text-sm truncate'>
                                             {acceptedFiles[0].name}
@@ -110,18 +106,16 @@ const UploadDropzone = () => {
     )
 }
 
-function UploadButton() {
+function UploadButton({ trigger }: { trigger?: ReactNode }) {
     const [ isOpen, setOpen ] = useState( false );
 
     return (
         <Dialog open={ isOpen } onOpenChange={ ( visible ) => setOpen( visible ) }>
             <DialogTrigger asChild>
-                <Button>
-                    Upload PDF
-                </Button>
+                {trigger ?? <Button>Upload PDF</Button>}
             </DialogTrigger>
             <DialogContent aria-description='upload pdf'>
-                <DialogTitle>hello</DialogTitle>
+                <DialogTitle>Upload a PDF</DialogTitle>
                 <UploadDropzone/>
             </DialogContent>
         </Dialog>

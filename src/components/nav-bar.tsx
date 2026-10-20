@@ -1,8 +1,8 @@
 import MaxWidthWrapper from '@/components/max-width-wrapper';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
-import {LoginLink, RegisterLink} from '@kinde-oss/kinde-auth-nextjs/server';
 import { ArrowRight } from 'lucide-react';
+import MobileMenu from '@/components/mobile-menu';
 
 function NavBar() {
     return(
@@ -12,29 +12,25 @@ function NavBar() {
                     <Link href='/' className='flex z-40 font-semibold'>
                         <span>DocuChatty</span>
                     </Link>
-                    {/*TODO MOBILE*/}
+                    <MobileMenu />
                     <div className='hidden items-center space-x-4 sm:flex'>
                         <>
                             <Link className={buttonVariants({
                                 variant: 'ghost',
                                 size: 'sm'
-                            })} href='/price' >Pricing </Link>
-                            <Link className={buttonVariants({
-                                variant: 'ghost',
-                                size: 'sm'
-                            })} href='/price' >Price </Link>
-                            <LoginLink
+                            })} href='/pricing' >Pricing</Link>
+                            <Link href='/sign-in'
                                 className={buttonVariants({
                                 variant: 'ghost',
                                 size: 'sm'
                             })} >
                                 Sign In
-                            </LoginLink>
-                            <RegisterLink className={buttonVariants({
+                            </Link>
+                            <Link href='/sign-up' className={buttonVariants({
                                 size: 'sm'
                             })} >
                                 Get started <ArrowRight className='ml-1.5 h-5 w-5' />
-                            </RegisterLink>
+                            </Link>
                         </>
                     </div>
                 </div>

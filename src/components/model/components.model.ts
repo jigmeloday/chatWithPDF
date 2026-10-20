@@ -18,7 +18,6 @@ export interface PdfFullscreenProps {
 
 export interface ChatWrapperProps {
     fileId: string
-    isSubscribed: boolean
 }
 
 export interface ChatProviderProps {
@@ -27,8 +26,10 @@ export interface ChatProviderProps {
 }
 
 export type StreamResponse = {
-    addMessage: ()=> void,
+    addMessage: (text?: string)=> void,
     handleInputChange: (event: ChangeEvent<HTMLTextAreaElement>) => void,
     message: string,
-    isLoading: boolean
+    isLoading: boolean,
+    pendingQuestion: string | null,
+    pendingAnswer: string,
 }

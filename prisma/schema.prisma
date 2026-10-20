@@ -14,44 +14,127 @@ datasource db {
 }
 
 model User {
-    id String @id @unique
-    email String @unique
-    File File[]
-    Message Message[]
-    stripeCustomerId String? @unique @map(name: "stripe_customer_id")
-    stripeSubscriptionId String? @unique @map(name: "stripe_subscription_id")
-    stripePriceId String? @map(name: "stripe_price_id")
-    stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
+  id                     String    @id @unique
+  name                   String    @default("")
+  email                  String    @unique
+  emailVerified          Boolean   @default(false)
+  image                  String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @default(now()) @updatedAt
+  sessions               Session[]
+  apiKeys                ApiKey[]
+  accounts               Account[]
+  File                   File[]
+  Message                Message[]
+  stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
+  stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
+  stripePriceId          String?   @map(name: "stripe_price_id")
+  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
 }
 
 enum uploadStatus {
-    PENDING
-    PROCESSING
-    FAILED
-    SUCCESS
+  PENDING
+  PROCESSING
+  FAILED
+  SUCCESS
 }
 
 model File {
-    id String @id @default(cuid())
-    name String
-    uploadStatus uploadStatus @default(PENDING)
-    messages Message[]
-    url String
-    key String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-     User      User?    @relation(fields: [userId], references: [id])
-     userId    String?
+  id           String          @id @default(cuid())
+  name         String
+  uploadStatus uploadStatus    @default(PENDING)
+  messages     Message[]
+  chunks       DocumentChunk[]
+  url          String
+  key          String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  User         User?           @relation(fields: [userId], references: [id])
+  userId       String?
+  failureReason String?
 }
 
 model Message {
-    id String @id @default(cuid())
-    text String @db.Text()
-    isUserMessage Boolean
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    User      User?    @relation(fields: [userId], references: [id])
-    userId    String?
-    File      File?    @relation(fields: [fileId], references: [id])
-    fileId    String?
+  id            String   @id @default(cuid())
+  text          String   @db.Text()
+  isUserMessage Boolean
+  inputTokens   Int      @default(0)
+  outputTokens  Int      @default(0)
+  source        String   @default("app")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  User          User?    @relation(fields: [userId], references: [id])
+  userId        String?
+  File          File?    @relation(fields: [fileId], references: [id])
+  fileId        String?
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@index([identifier])
+}
+
+model ApiKey {
+  id           String    @id @default(cuid())
+  name         String
+  prefix       String
+  hash         String    @unique
+  createdAt    DateTime  @default(now())
+  lastUsedAt   DateTime?
+  requestCount Int       @default(0)
+  revokedAt    DateTime?
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model DocumentChunk {
+  id        String                     @id @default(cuid())
+  fileId    String
+  file      File                       @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  page      Int
+  content   String                     @db.Text
+  embedding Unsupported("vector(768)")
+
+  @@index([fileId])
 }
