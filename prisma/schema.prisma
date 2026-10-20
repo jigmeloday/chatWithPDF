@@ -51,6 +51,7 @@ model File {
   updatedAt    DateTime        @updatedAt
   User         User?           @relation(fields: [userId], references: [id])
   userId       String?
+  failureReason String?
 }
 
 model Message {

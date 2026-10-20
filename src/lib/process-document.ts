@@ -2,8 +2,12 @@ import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { db } from '@/db';
 import { embedTexts } from '@/lib/ai/gemini';
+import { PLANS } from '@/config/plans';
 import { storage } from '@/lib/storage';
+import { getUsageSummary } from '@/lib/usage';
 import { addChunks } from '@/lib/vector-store';
+
+class UserFacingError extends Error {}
 
 // Reads the stored PDF, embeds it into pgvector and updates the file's status.
 export const processDocument = async (fileId: string, key: string) => {
@@ -11,9 +15,14 @@ export const processDocument = async (fileId: string, key: string) => {
         const data = await storage.read(key);
         const pages = await new PDFLoader(new Blob([new Uint8Array(data)])).load();
 
+        const file = await db.file.findUniqueOrThrow({ where: { id: fileId } });
+        const plan = file.userId ? (await getUsageSummary(file.userId)).plan : PLANS.free;
+        if (pages.length > plan.maxPagesPerDocument)
+            throw new UserFacingError(`This PDF has ${pages.length} pages. The ${plan.name} plan supports up to ${plan.maxPagesPerDocument}.`);
+
         const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000, chunkOverlap: 150 });
         const docs = (await splitter.splitDocuments(pages)).filter((d) => d.pageContent.trim());
-        if (!docs.length) throw new Error('No extractable text (scanned PDF?)');
+        if (!docs.length) throw new UserFacingError('No selectable text found. Scanned PDFs are not supported yet.');
 
         const embeddings = await embedTexts(docs.map((d) => d.pageContent));
         await addChunks(
@@ -24,9 +33,10 @@ export const processDocument = async (fileId: string, key: string) => {
                 embedding: embeddings[i],
             }))
         );
-        await db.file.update({ where: { id: fileId }, data: { uploadStatus: 'SUCCESS' } });
+        await db.file.update({ where: { id: fileId }, data: { uploadStatus: 'SUCCESS', failureReason: null } });
     } catch (err) {
         console.error(`Processing failed for file ${fileId}:`, err);
-        await db.file.update({ where: { id: fileId }, data: { uploadStatus: 'FAILED' } });
+        const reason = err instanceof UserFacingError ? err.message : 'Processing failed. Please try again.';
+        await db.file.update({ where: { id: fileId }, data: { uploadStatus: 'FAILED', failureReason: reason } });
     }
 };

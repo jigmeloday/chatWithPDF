@@ -124,7 +124,7 @@ export const appRouter = router({
 
             if (!file) return { status: 'PENDING' as const }
 
-            return { status: file.uploadStatus }
+            return { status: file.uploadStatus, reason: file.failureReason }
         }),
 
     deleteFile: privateProcedure.input(

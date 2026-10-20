@@ -74,8 +74,7 @@ function ChatWrapper ({ fileId }: ChatWrapperProps) {
                             We couldn&apos;t process this PDF
                         </h3>
                         <p className='text-zinc-500 text-sm text-center max-w-xs'>
-                            It may be scanned images with no selectable text, or processing failed.
-                            Delete it and try uploading again.
+                            {data?.reason ?? 'Processing failed.'} Delete it and try uploading again.
                         </p>
                         <Link
                             href='/documents'
