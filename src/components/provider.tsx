@@ -7,6 +7,7 @@ import {
     QueryClientProvider,
 } from '@tanstack/react-query'
 import { httpBatchLink } from '@trpc/client'
+import { MotionConfig } from 'framer-motion'
 import { PropsWithChildren, useState } from 'react'
 
 const Providers = ({ children }: PropsWithChildren) => {
@@ -26,7 +27,8 @@ const Providers = ({ children }: PropsWithChildren) => {
             client={trpcClient}
             queryClient={queryClient}>
             <QueryClientProvider client={queryClient}>
-                {children}
+                {/* Respect the OS "reduce motion" setting */}
+                <MotionConfig reducedMotion='user'>{children}</MotionConfig>
             </QueryClientProvider>
         </trpc.Provider>
     )

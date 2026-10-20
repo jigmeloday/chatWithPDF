@@ -5,6 +5,7 @@ import { getUsageSummary } from '@/lib/usage';
 import { PLANS, PLAN_ORDER } from '@/config/plans';
 import { buttonVariants } from '@/components/ui/button';
 import BillingButton from '@/components/billing-button';
+import { Stagger, StaggerItem } from '@/components/motion';
 import { cn } from '@/lib/utils';
 
 export const metadata = { title: 'Pricing · Otterly' };
@@ -23,15 +24,16 @@ async function Page() {
                 </p>
             </div>
 
-            <div className='mt-12 grid gap-6 lg:grid-cols-3'>
+            <Stagger onMount className='mt-12 grid gap-6 lg:grid-cols-3' gap={0.12}>
                 {PLAN_ORDER.map((slug) => {
                     const plan = PLANS[slug];
                     const isPro = plan.slug === 'pro';
                     const rank = PLAN_ORDER.indexOf(slug);
                     const currentRank = current ? PLAN_ORDER.indexOf(current) : -1;
                     return (
-                        <section
+                        <StaggerItem
                             key={plan.slug}
+                            whileHover={{ y: -6 }}
                             className={cn(
                                 'relative rounded-3xl bg-white p-8 shadow-sm ring-1',
                                 isPro ? 'ring-2 ring-green-600 shadow-lg' : 'ring-zinc-950/10'
@@ -69,10 +71,10 @@ async function Page() {
                                     <Link href='/settings' className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}>Manage in settings</Link>
                                 )}
                             </div>
-                        </section>
+                        </StaggerItem>
                     );
                 })}
-            </div>
+            </Stagger>
         </main>
     );
 }

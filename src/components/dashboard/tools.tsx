@@ -4,12 +4,14 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { AlertTriangle, ArrowRight, FileText, KeyRound, MessageSquare, Sparkles, UploadCloud } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
 import UploadButton from '@/components/upload-button';
+import { EASE, Stagger, StaggerItem } from '@/components/motion';
+import { motion } from 'framer-motion';
 import BillingButton from '@/components/billing-button';
 import { nextPlan } from '@/config/plans';
 import { cn } from '@/lib/utils';
 
 const tileClass =
-    'group flex w-full items-start gap-4 rounded-2xl bg-white p-5 text-left shadow-sm ring-1 ring-zinc-950/5 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-green-500/40';
+    'group flex h-full w-full items-start gap-4 rounded-2xl bg-white p-5 text-left shadow-sm ring-1 ring-zinc-950/5 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-green-500/40';
 
 function Tile({ icon: Icon, title, hint }: { icon: typeof FileText; title: string; hint: string }) {
     return (
@@ -33,30 +35,38 @@ export function QuickActions() {
         .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))[0];
 
     return (
-        <div className='mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4'>
-            <UploadButton
-                trigger={
-                    <button className={tileClass}>
-                        <Tile icon={UploadCloud} title='Upload a PDF' hint='Drag and drop, up to 4MB' />
-                    </button>
-                }
-            />
-            {lastReady ? (
-                <Link href={`/dashboard/${lastReady.id}`} className={tileClass}>
-                    <Tile icon={MessageSquare} title='Continue chatting' hint={lastReady.name} />
+        <Stagger onMount delay={0.15} className='mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4'>
+            <StaggerItem className='h-full'>
+                <UploadButton
+                    trigger={
+                        <button className={tileClass}>
+                            <Tile icon={UploadCloud} title='Upload a PDF' hint='Drag and drop, up to 4MB' />
+                        </button>
+                    }
+                />
+            </StaggerItem>
+            <StaggerItem className='h-full'>
+                {lastReady ? (
+                    <Link href={`/dashboard/${lastReady.id}`} className={tileClass}>
+                        <Tile icon={MessageSquare} title='Continue chatting' hint={lastReady.name} />
+                    </Link>
+                ) : (
+                    <div className={cn(tileClass, 'cursor-not-allowed opacity-60 hover:translate-y-0 hover:shadow-sm hover:ring-zinc-950/5')}>
+                        <Tile icon={MessageSquare} title='Continue chatting' hint='Upload a document first' />
+                    </div>
+                )}
+            </StaggerItem>
+            <StaggerItem className='h-full'>
+                <Link href='/documents' className={tileClass}>
+                    <Tile icon={FileText} title='Browse documents' hint={`${files?.length ?? 0} in your library`} />
                 </Link>
-            ) : (
-                <div className={cn(tileClass, 'cursor-not-allowed opacity-60 hover:translate-y-0 hover:shadow-sm hover:ring-zinc-950/5')}>
-                    <Tile icon={MessageSquare} title='Continue chatting' hint='Upload a document first' />
-                </div>
-            )}
-            <Link href='/documents' className={tileClass}>
-                <Tile icon={FileText} title='Browse documents' hint={`${files?.length ?? 0} in your library`} />
-            </Link>
-            <Link href='/developers' className={tileClass}>
-                <Tile icon={KeyRound} title='Create API key' hint='Use your documents from code' />
-            </Link>
-        </div>
+            </StaggerItem>
+            <StaggerItem className='h-full'>
+                <Link href='/developers' className={tileClass}>
+                    <Tile icon={KeyRound} title='Create API key' hint='Use your documents from code' />
+                </Link>
+            </StaggerItem>
+        </Stagger>
     );
 }
 
@@ -86,16 +96,18 @@ export function TokenChart() {
                                         {d.tokens.toLocaleString()}
                                     </span>
                                 )}
-                                <div
+                                <motion.div
+                                    initial={{ height: '0%' }}
+                                    animate={{ height: `${d ? Math.max(3, (d.tokens / max) * 100) : 30}%` }}
+                                    transition={{ duration: 0.8, ease: EASE, delay: i * 0.06 }}
                                     className={cn(
-                                        'w-full rounded-t-lg transition-all duration-500',
+                                        'w-full rounded-t-lg',
                                         isLoading
                                             ? 'animate-pulse bg-zinc-100'
                                             : d?.tokens
                                               ? 'bg-gradient-to-t from-green-700 to-green-400'
                                               : 'bg-zinc-100'
                                     )}
-                                    style={{ height: `${d ? Math.max(3, (d.tokens / max) * 100) : 30}%` }}
                                 />
                             </div>
                             <span className='h-4 text-xs text-zinc-500'>{d ? format(new Date(d.date), 'EEE') : ''}</span>

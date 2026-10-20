@@ -1,4 +1,5 @@
 import { PropsWithChildren } from 'react';
+import { Stagger, StaggerItem } from '@/components/motion';
 import { FileText, MessageCircle, Sparkles } from 'lucide-react';
 
 const HIGHLIGHTS = [
@@ -21,16 +22,16 @@ function AuthShell({ children }: PropsWithChildren) {
                         you need without scrolling through pages.
                     </p>
                 </div>
-                <ul className='flex flex-col gap-4'>
+                <Stagger as='ul' onMount delay={0.2} className='flex flex-col gap-4'>
                     {HIGHLIGHTS.map(({ icon: Icon, text }) => (
-                        <li key={text} className='flex items-center gap-3'>
+                        <StaggerItem as='li' key={text} className='flex items-center gap-3'>
                             <span className='flex h-9 w-9 items-center justify-center rounded-lg bg-white/15'>
                                 <Icon className='h-5 w-5' />
                             </span>
                             {text}
-                        </li>
+                        </StaggerItem>
                     ))}
-                </ul>
+                </Stagger>
             </aside>
 
             <main className='flex items-center justify-center px-4 py-12'>{children}</main>

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { format, formatDistanceToNow } from 'date-fns';
+import { motion } from 'framer-motion';
 import { ArrowUpRight, FileText, Loader2, MoreHorizontal, Pencil, RotateCw, Trash } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
 import { Button } from '@/components/ui/button';
@@ -108,11 +109,14 @@ function FileCard({ file, view = 'grid' }: FileCardProps) {
     );
 
     return (
-        <li
-            className={cn(
-                'group relative rounded-2xl bg-white shadow-sm ring-1 ring-zinc-950/5 transition hover:shadow-md hover:ring-green-500/40',
-                view === 'grid' && 'hover:-translate-y-0.5'
-            )}>
+        <motion.li
+            layout
+            initial={{ opacity: 0, scale: 0.96, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.94 }}
+            whileHover={view === 'grid' ? { y: -3 } : undefined}
+            transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+            className='group relative rounded-2xl bg-white shadow-sm ring-1 ring-zinc-950/5 hover:shadow-md hover:ring-green-500/40'>
             {view === 'grid' ? (
                 <>
                     <Link href={`/dashboard/${file.id}`} className='flex flex-col gap-5 p-5'>
@@ -188,7 +192,7 @@ function FileCard({ file, view = 'grid' }: FileCardProps) {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </li>
+        </motion.li>
     );
 }
 

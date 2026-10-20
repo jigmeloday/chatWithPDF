@@ -1,6 +1,7 @@
 'use client';
 import { useMemo, useState } from 'react';
 import { LayoutGrid, List, Search, UploadCloud } from 'lucide-react';
+import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { trpc } from '@/app/_trpc/client';
 import UploadButton from '@/components/upload-button';
 import FileFallback from '@/components/dashboard/file-fallback';
@@ -157,9 +158,13 @@ function Documents() {
                             ? 'grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3'
                             : 'flex flex-col gap-3'
                     )}>
-                    {visible.map((file) => (
-                        <FileCard key={file.id} file={file} view={view} />
-                    ))}
+                    <LayoutGroup>
+                        <AnimatePresence mode='popLayout'>
+                            {visible.map((file) => (
+                                <FileCard key={file.id} file={file} view={view} />
+                            ))}
+                        </AnimatePresence>
+                    </LayoutGroup>
                 </ul>
             )}
         </main>

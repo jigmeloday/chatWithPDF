@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { motion } from 'framer-motion'
 import { Check, Copy } from 'lucide-react'
 import { linkCitations } from '@/lib/citations'
 import { cn } from '@/lib/utils'
@@ -20,7 +21,12 @@ function Message({ text, isUser, isStreaming }: MessageProps) {
     }
 
     return(
-        <div className={cn('group flex items-end gap-1.5', isUser ? 'justify-end' : 'justify-start')}>
+        <motion.div
+            initial={{ opacity: 0, y: 12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+            style={{ originX: isUser ? 1 : 0 }}
+            className={cn('group flex items-end gap-1.5', isUser ? 'justify-end' : 'justify-start')}>
             <div
                 className={cn(
                     'max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm',
@@ -71,7 +77,7 @@ function Message({ text, isUser, isStreaming }: MessageProps) {
                     {copied ? <Check className='h-3.5 w-3.5' /> : <Copy className='h-3.5 w-3.5' />}
                 </button>
             )}
-        </div>
+        </motion.div>
     )
 }
 

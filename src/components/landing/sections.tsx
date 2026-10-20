@@ -14,6 +14,7 @@ import {
     Zap,
 } from 'lucide-react';
 import { PLANS, PLAN_ORDER } from '@/config/plans';
+import { Reveal, Stagger, StaggerItem } from '@/components/motion';
 import { SUPPORT_EMAIL } from '@/config/site';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -44,18 +45,18 @@ const FAQ = [
 
 function SectionHeading({ eyebrow, title, text }: { eyebrow: string; title: string; text?: string }) {
     return (
-        <div className='mx-auto max-w-2xl text-center'>
+        <Reveal className='mx-auto max-w-2xl text-center'>
             <p className='text-sm font-semibold uppercase tracking-wider text-green-700'>{eyebrow}</p>
             <h2 className='mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>{title}</h2>
             {text && <p className='mt-3 text-lg text-gray-600'>{text}</p>}
-        </div>
+        </Reveal>
     );
 }
 
 // A static mock of the product, so visitors can see what they get.
 function ProductPreview() {
     return (
-        <div className='mx-auto max-w-5xl px-6'>
+        <Reveal className='mx-auto max-w-5xl px-6' y={40}>
             <div className='overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-zinc-950/10'>
                 <div className='flex items-center gap-2 border-b border-zinc-200 bg-zinc-50 px-4 py-3'>
                     <span className='h-3 w-3 rounded-full bg-red-400' />
@@ -76,26 +77,26 @@ function ProductPreview() {
                             ))}
                         </div>
                     </div>
-                    <div className='flex flex-col gap-3 bg-zinc-50 p-5 md:col-span-2'>
-                        <div className='ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-green-600 px-4 py-2.5 text-sm text-white'>
+                    <Stagger className='flex flex-col gap-3 bg-zinc-50 p-5 md:col-span-2' gap={0.5} delay={0.5}>
+                        <StaggerItem className='ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-green-600 px-4 py-2.5 text-sm text-white'>
                             What drove revenue growth this quarter?
-                        </div>
-                        <div className='max-w-[90%] rounded-2xl rounded-bl-sm bg-white px-4 py-2.5 text-sm text-zinc-800 shadow-sm ring-1 ring-zinc-950/5'>
+                        </StaggerItem>
+                        <StaggerItem className='max-w-[90%] rounded-2xl rounded-bl-sm bg-white px-4 py-2.5 text-sm text-zinc-800 shadow-sm ring-1 ring-zinc-950/5'>
                             Revenue grew <b>18%</b>, mainly from new enterprise contracts and higher renewal rates{' '}
                             <span className='font-medium text-green-700 underline decoration-dotted'>(p. 4)</span>.
-                        </div>
-                        <div className='ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-green-600 px-4 py-2.5 text-sm text-white'>
+                        </StaggerItem>
+                        <StaggerItem className='ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-green-600 px-4 py-2.5 text-sm text-white'>
                             Any risks mentioned?
-                        </div>
-                        <div className='flex max-w-[60%] gap-1 rounded-2xl rounded-bl-sm bg-white px-4 py-3 shadow-sm ring-1 ring-zinc-950/5'>
+                        </StaggerItem>
+                        <StaggerItem className='flex max-w-[60%] gap-1 rounded-2xl rounded-bl-sm bg-white px-4 py-3 shadow-sm ring-1 ring-zinc-950/5'>
                             {[0, 1, 2].map((i) => (
                                 <span key={i} className='h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400' style={{ animationDelay: `${i * 120}ms` }} />
                             ))}
-                        </div>
-                    </div>
+                        </StaggerItem>
+                    </Stagger>
                 </div>
             </div>
-        </div>
+        </Reveal>
     );
 }
 
@@ -109,26 +110,26 @@ function LandingSections() {
             {/* How it works */}
             <section id='how-it-works' className='mx-auto mt-28 max-w-5xl scroll-mt-28 px-6'>
                 <SectionHeading eyebrow='How it works' title='Start chatting in minutes' text='Three steps from a PDF to answers you can trust.' />
-                <ol className='mt-12 grid gap-6 md:grid-cols-3'>
+                <Stagger as='ol' className='mt-12 grid gap-6 md:grid-cols-3' gap={0.12}>
                     {STEPS.map(({ icon: Icon, title, text }, i) => (
-                        <li key={title} className='relative rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-950/10'>
+                        <StaggerItem as='li' key={title} className='relative rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-950/10' whileHover={{ y: -4 }}>
                             <span className='absolute right-5 top-4 text-5xl font-bold text-zinc-100'>{i + 1}</span>
                             <span className='flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-700 text-white shadow-sm'>
                                 <Icon className='h-5 w-5' />
                             </span>
                             <h3 className='mt-5 text-lg font-semibold'>{title}</h3>
                             <p className='mt-2 text-sm text-zinc-600'>{text}</p>
-                        </li>
+                        </StaggerItem>
                     ))}
-                </ol>
+                </Stagger>
             </section>
 
             {/* Features */}
             <section id='features' className='mx-auto mt-28 max-w-6xl scroll-mt-28 px-6'>
                 <SectionHeading eyebrow='Features' title='Everything you need to understand your documents' />
-                <div className='mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3'>
+                <Stagger className='mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3' gap={0.07}>
                     {FEATURES.map(({ icon: Icon, title, text }) => (
-                        <div key={title} className='flex gap-4'>
+                        <StaggerItem key={title} className='flex gap-4'>
                             <span className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-50 text-green-700'>
                                 <Icon className='h-5 w-5' />
                             </span>
@@ -136,14 +137,14 @@ function LandingSections() {
                                 <h3 className='font-semibold text-zinc-900'>{title}</h3>
                                 <p className='mt-1 text-sm text-zinc-600'>{text}</p>
                             </div>
-                        </div>
+                        </StaggerItem>
                     ))}
-                </div>
+                </Stagger>
             </section>
 
             {/* API */}
             <section className='mx-auto mt-28 max-w-6xl px-6'>
-                <div className='grid items-center gap-10 overflow-hidden rounded-3xl bg-zinc-900 p-8 text-white md:grid-cols-2 md:p-12'>
+                <Reveal className='grid items-center gap-10 overflow-hidden rounded-3xl bg-zinc-900 p-8 text-white md:grid-cols-2 md:p-12'>
                     <div>
                         <p className='text-sm font-semibold uppercase tracking-wider text-green-400'>For developers</p>
                         <h2 className='mt-2 text-3xl font-bold tracking-tight'>Build on your documents</h2>
@@ -169,19 +170,20 @@ function LandingSections() {
   "usage": { "input_tokens": 812,
              "output_tokens": 164 } }`}
                     </pre>
-                </div>
+                </Reveal>
             </section>
 
             {/* Pricing */}
             <section id='pricing' className='mx-auto mt-28 max-w-6xl scroll-mt-28 px-6'>
                 <SectionHeading eyebrow='Pricing' title='Simple plans, no surprises' text='Start free. Upgrade when you need more.' />
-                <div className='mt-10 grid gap-6 lg:grid-cols-3'>
+                <Stagger className='mt-10 grid gap-6 lg:grid-cols-3' gap={0.12}>
                     {PLAN_ORDER.map((slug) => {
                         const plan = PLANS[slug];
                         const isPro = plan.slug === 'pro';
                         return (
-                            <div
+                            <StaggerItem
                                 key={plan.slug}
+                                whileHover={{ y: -6 }}
                                 className={cn('relative rounded-3xl bg-white p-7 shadow-sm ring-1', isPro ? 'shadow-lg ring-2 ring-green-600' : 'ring-zinc-950/10')}>
                                 {isPro && (
                                     <span className='absolute -top-3 left-7 rounded-full bg-green-600 px-3 py-1 text-xs font-semibold text-white'>Most popular</span>
@@ -201,16 +203,16 @@ function LandingSections() {
                                     className={cn(buttonVariants({ variant: isPro ? 'default' : 'outline' }), 'mt-7 w-full')}>
                                     {plan.price === 0 ? 'Start for free' : `Get started with ${plan.name}`}
                                 </Link>
-                            </div>
+                            </StaggerItem>
                         );
                     })}
-                </div>
+                </Stagger>
             </section>
 
             {/* FAQ */}
             <section id='faq' className='mx-auto mt-28 max-w-3xl scroll-mt-28 px-6'>
                 <SectionHeading eyebrow='FAQ' title='Questions, answered' />
-                <div className='mt-10 divide-y divide-zinc-200 rounded-2xl bg-white shadow-sm ring-1 ring-zinc-950/10'>
+                <Reveal className='mt-10 divide-y divide-zinc-200 rounded-2xl bg-white shadow-sm ring-1 ring-zinc-950/10'>
                     {FAQ.map(({ q, a }) => (
                         <details key={q} className='group p-5'>
                             <summary className='flex cursor-pointer list-none items-center justify-between font-medium'>
@@ -220,12 +222,12 @@ function LandingSections() {
                             <p className='mt-3 text-sm text-zinc-600'>{a}</p>
                         </details>
                     ))}
-                </div>
+                </Reveal>
             </section>
 
             {/* Final CTA */}
             <section className='mx-auto mb-24 mt-28 max-w-6xl px-6'>
-                <div className='relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-600 via-green-700 to-emerald-900 px-8 py-14 text-center text-white shadow-lg'>
+                <Reveal className='relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-600 via-green-700 to-emerald-900 px-8 py-14 text-center text-white shadow-lg'>
                     <div className='pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full bg-white/10 blur-2xl' />
                     <FileText className='mx-auto h-8 w-8 text-green-200' />
                     <h2 className='mt-4 text-3xl font-bold tracking-tight sm:text-4xl'>Ready to talk to your documents?</h2>
@@ -233,7 +235,7 @@ function LandingSections() {
                     <Link href='/sign-up' className={cn(buttonVariants({ size: 'lg' }), 'relative mt-8 bg-white text-green-800 hover:bg-green-50')}>
                         Get started free <ArrowRight className='ml-2 h-4 w-4' />
                     </Link>
-                </div>
+                </Reveal>
             </section>
         </>
     );

@@ -3,6 +3,7 @@ import { ArrowUpRight, CalendarClock, Sparkles } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
 import UploadButton from '@/components/upload-button';
 import { Button } from '@/components/ui/button';
+import { Reveal } from '@/components/motion';
 import UsageCards from '@/components/dashboard/usage-cards';
 import { ActivityFeed, Alerts, ApiCard, PlanCard, QuickActions, TokenChart } from '@/components/dashboard/tools';
 
@@ -57,15 +58,19 @@ function Overview({ name }: { name: string }) {
 
             <QuickActions />
 
-            <div className='mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3'>
-                <TokenChart />
-                <div className='flex flex-col gap-4'>
-                    <PlanCard />
-                    <ApiCard />
+            <Reveal delay={0.1}>
+                <div className='mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3'>
+                    <TokenChart />
+                    <div className='flex flex-col gap-4'>
+                        <PlanCard />
+                        <ApiCard />
+                    </div>
                 </div>
-            </div>
+            </Reveal>
 
-            <ActivityFeed />
+            <Reveal>
+                <ActivityFeed />
+            </Reveal>
         </main>
     );
 }

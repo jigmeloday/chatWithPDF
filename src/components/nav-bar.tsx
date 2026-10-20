@@ -1,6 +1,8 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { handleAnchorClick } from '@/lib/smooth-scroll';
 import { ArrowRight } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 import MobileMenu from '@/components/mobile-menu';
@@ -14,33 +16,47 @@ const NAV_LINKS = [
     { href: '/#faq', label: 'FAQ' },
 ];
 
-// Floating pill header that spreads to a full-width bar once the page is scrolled.
-function NavBar() {
-    const [scrolled, setScrolled] = useState(false);
+const SCROLL_DISTANCE = 120; // px of scrolling over which the pill spreads to full width
 
-    useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 24);
-        onScroll();
-        window.addEventListener('scroll', onScroll, { passive: true });
-        return () => window.removeEventListener('scroll', onScroll);
-    }, []);
+// Floating pill header that spreads to a full-width bar as the page scrolls.
+// Scroll position drives motion values through a spring, so it stays smooth and never re-renders React.
+// The header keeps a fixed height, so page content never shifts under the cursor.
+function NavBar() {
+    const pathname = usePathname();
+    const { scrollY } = useScroll();
+    const progress = useSpring(useTransform(scrollY, [0, SCROLL_DISTANCE], [0, 1], { clamp: true }), {
+        stiffness: 220,
+        damping: 32,
+        mass: 0.4,
+    });
+
+    // Pure CSS expressions keep this identical on the server and the client.
+    const width = useTransform(progress, (p) => `calc(100% - ${(1 - p) * 24}px)`);
+    const maxWidth = useTransform(progress, (p) => `calc(1024px + (100vw - 1024px) * ${p})`);
+    const marginTop = useTransform(progress, [0, 1], [12, 0]);
+    const borderRadius = useTransform(progress, [0, 1], [28, 0]);
+    const boxShadow = useTransform(
+        progress,
+        (p) => `0 10px 25px -5px rgba(24,24,27,${0.06 * (1 - p)}), 0 0 0 1px rgba(9,9,11,${0.1 * (1 - p)})`
+    );
+    const borderBottomColor = useTransform(progress, [0, 1], ['rgba(228,228,231,0)', 'rgba(228,228,231,1)']);
 
     return (
-        <header className={cn('sticky top-0 z-30 transition-[padding] duration-300', scrolled ? 'px-0 pt-0' : 'px-3 pt-3 sm:px-6')}>
-            <nav
+        <header className='pointer-events-none sticky top-0 z-30 h-[68px]'>
+            <motion.nav
                 aria-label='Main'
-                className={cn(
-                    'mx-auto bg-white/80 backdrop-blur-xl transition-all duration-300',
-                    scrolled
-                        ? 'max-w-[100%] rounded-none shadow-sm ring-0 border-b border-zinc-200'
-                        : 'max-w-5xl rounded-full shadow-lg shadow-zinc-900/5 ring-1 ring-zinc-950/10'
-                )}>
-                <div
-                    className={cn(
-                        'mx-auto flex h-14 items-center justify-between transition-all duration-300',
-                        scrolled ? 'max-w-6xl px-4 sm:px-6' : 'px-3 pl-4 sm:px-4 sm:pl-5'
-                    )}>
-                    <Link href='/' className='flex items-center gap-2.5 font-semibold'>
+                style={{ width, maxWidth, marginTop, borderRadius, boxShadow, borderBottomColor, borderBottomWidth: 1, borderBottomStyle: 'solid' }}
+                className='pointer-events-auto mx-auto bg-white/80 backdrop-blur-xl'>
+                <div className='mx-auto flex h-14 max-w-6xl items-center justify-between px-3 pl-4 sm:px-5'>
+                    <Link
+                        href='/'
+                        onClick={(e) => {
+                            if (pathname === '/') {
+                                e.preventDefault();
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }
+                        }}
+                        className='flex items-center gap-2.5 font-semibold'>
                         <span className='flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-emerald-700 text-sm font-bold text-white shadow-sm'>
                             O
                         </span>
@@ -52,6 +68,7 @@ function NavBar() {
                             <li key={l.href}>
                                 <Link
                                     href={l.href}
+                                    onClick={(e) => handleAnchorClick(e, l.href, pathname)}
                                     className='rounded-full px-3.5 py-1.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900'>
                                     {l.label}
                                 </Link>
@@ -73,7 +90,7 @@ function NavBar() {
                         <MobileMenu />
                     </div>
                 </div>
-            </nav>
+            </motion.nav>
         </header>
     );
 }

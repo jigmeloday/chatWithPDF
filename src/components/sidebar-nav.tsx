@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import { FileText, KeyRound, LayoutDashboard, Settings, LogOut } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
@@ -28,13 +29,18 @@ export function SidebarLinks() {
                         key={href}
                         href={href}
                         className={cn(
-                            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                            active
-                                ? 'bg-green-50 text-green-800'
-                                : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
+                            'relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                            active ? 'text-green-800' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
                         )}>
-                        <Icon className='h-4 w-4' />
-                        {label}
+                        {active && (
+                            <motion.span
+                                layoutId='sidebar-active'
+                                className='absolute inset-0 rounded-lg bg-green-50'
+                                transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                            />
+                        )}
+                        <Icon className='relative h-4 w-4' />
+                        <span className='relative'>{label}</span>
                     </Link>
                 );
             })}

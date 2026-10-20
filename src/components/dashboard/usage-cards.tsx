@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { CalendarClock, FileText, MessageSquare, Zap } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
 import Skeleton from '@/components/skeleton';
+import { CountUp, GrowBar, Stagger, StaggerItem } from '@/components/motion';
 import { cn } from '@/lib/utils';
 
 const formatNumber = (n: number) =>
@@ -19,7 +20,7 @@ function Meter({ used, limit }: { used: number; limit: number }) {
             aria-valuemin={0}
             aria-valuemax={100}
             className='mt-4 h-2 w-full overflow-hidden rounded-full bg-zinc-100'>
-            <div className={cn('h-full rounded-full transition-all duration-700', barColor(pct))} style={{ width: `${pct}%` }} />
+            <GrowBar percent={pct} delay={0.25} className={cn('h-full rounded-full', barColor(pct))} />
         </div>
     );
 }
@@ -43,7 +44,10 @@ function Card({
     children: React.ReactNode;
 }) {
     return (
-        <div className='rounded-2xl bg-white p-5 shadow-sm ring-1 ring-zinc-950/5 transition hover:-translate-y-0.5 hover:shadow-md'>
+        <StaggerItem
+            whileHover={{ y: -3 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+            className='rounded-2xl bg-white p-5 shadow-sm ring-1 ring-zinc-950/5 hover:shadow-md'>
             <div className='flex items-center justify-between'>
                 <span className='text-sm font-medium text-zinc-500'>{label}</span>
                 <span className={cn('flex h-9 w-9 items-center justify-center rounded-xl', TONES[tone])}>
@@ -51,7 +55,7 @@ function Card({
                 </span>
             </div>
             {children}
-        </div>
+        </StaggerItem>
     );
 }
 
@@ -77,13 +81,13 @@ function UsageCards() {
     const elapsed = Math.min(100, ((periodLen - data.daysLeft) / periodLen) * 100);
 
     return (
-        <div className='mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+        <Stagger onMount className='mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
             <Card icon={CalendarClock} label='Subscription' tone='green'>
                 <p className='mt-3 text-3xl font-semibold tracking-tight text-zinc-900'>
-                    {data.daysLeft} <span className='text-base font-normal text-zinc-500'>days left</span>
+                    <CountUp value={data.daysLeft} /> <span className='text-base font-normal text-zinc-500'>days left</span>
                 </p>
                 <div className='mt-4 h-2 w-full overflow-hidden rounded-full bg-zinc-100'>
-                    <div className='h-full rounded-full bg-green-600 transition-all duration-700' style={{ width: `${elapsed}%` }} />
+                    <GrowBar percent={elapsed} delay={0.25} className='h-full rounded-full bg-green-600' />
                 </div>
                 <p className='mt-2 text-xs text-zinc-500'>
                     {data.plan.name} · renews {format(new Date(data.periodEnd), 'MMM d, yyyy')}
@@ -92,7 +96,7 @@ function UsageCards() {
 
             <Card icon={Zap} label='Tokens used' tone='violet'>
                 <p className='mt-3 text-3xl font-semibold tracking-tight text-zinc-900'>
-                    {formatNumber(data.tokensUsed)}
+                    <CountUp value={data.tokensUsed} format={formatNumber} />
                     <span className='text-base font-normal text-zinc-500'> / {formatNumber(data.tokenLimit)}</span>
                 </p>
                 <Meter used={data.tokensUsed} limit={data.tokenLimit} />
@@ -101,7 +105,7 @@ function UsageCards() {
 
             <Card icon={FileText} label='Documents' tone='sky'>
                 <p className='mt-3 text-3xl font-semibold tracking-tight text-zinc-900'>
-                    {data.documentsUsed}
+                    <CountUp value={data.documentsUsed} />
                     <span className='text-base font-normal text-zinc-500'> / {data.documentLimit}</span>
                 </p>
                 <Meter used={data.documentsUsed} limit={data.documentLimit} />
@@ -112,11 +116,11 @@ function UsageCards() {
 
             <Card icon={MessageSquare} label='Messages this period' tone='amber'>
                 <p className='mt-3 text-3xl font-semibold tracking-tight text-zinc-900'>
-                    {data.messagesSent.toLocaleString()}
+                    <CountUp value={data.messagesSent} />
                 </p>
                 <p className='mt-4 text-xs text-zinc-500'>Questions you&apos;ve asked your documents</p>
             </Card>
-        </div>
+        </Stagger>
     );
 }
 
