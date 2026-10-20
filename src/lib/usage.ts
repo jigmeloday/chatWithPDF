@@ -15,8 +15,10 @@ export interface UsageSummary {
 }
 
 // Pro runs on the Stripe billing period; Free renews monthly from the signup date.
-const getBillingPeriod = (user: { createdAt: Date; stripePriceId: string | null; stripeCurrentPeriodEnd: Date | null }) => {
-    const now = new Date();
+export const getBillingPeriod = (
+    user: { createdAt: Date; stripePriceId: string | null; stripeCurrentPeriodEnd: Date | null },
+    now = new Date()
+) => {
     const end = user.stripeCurrentPeriodEnd;
 
     if (user.stripePriceId && end && end > now) {

@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 const ENDPOINTS = [
     { method: 'GET', path: '/api/v1/documents', desc: 'List your documents and their processing status.' },
     { method: 'GET', path: '/api/v1/usage', desc: 'Tokens, documents and days left in the current period.' },
+    { method: 'POST', path: '/api/v1/documents', desc: 'Upload a PDF (multipart form, field "file"). Poll the list until it is SUCCESS.' },
     { method: 'POST', path: '/api/v1/chat', desc: 'Ask a question about a document and get an answer with token usage.' },
 ];
 
@@ -130,6 +131,12 @@ function Developers() {
 {`curl ${baseUrl}/api/v1/documents \\
   -H "Authorization: Bearer dc_live_..."`}
                 </pre>
+                <p className='mt-4 text-sm text-zinc-500'>
+                    Limit: 60 requests per minute. Full reference:{' '}
+                    <a href='/api/v1/openapi.json' target='_blank' rel='noopener noreferrer' className='font-medium text-green-700 hover:underline'>
+                        OpenAPI spec
+                    </a>
+                </p>
                 <ul className='mt-6 divide-y divide-zinc-200 rounded-xl border border-zinc-200 bg-white shadow-sm'>
                     {ENDPOINTS.map((e) => (
                         <li key={e.path} className='flex flex-col gap-1 p-4 sm:flex-row sm:items-center sm:gap-4'>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Check, Copy } from 'lucide-react'
+import { linkCitations } from '@/lib/citations'
 import { cn } from '@/lib/utils'
 
 interface MessageProps {
@@ -8,10 +9,6 @@ interface MessageProps {
     isUser: boolean
     isStreaming?: boolean
 }
-
-// Turns "(p. 3)" and "(pp. 3-4)" into links that jump the PDF viewer to that page.
-const linkCitations = (text: string) =>
-    text.replace(/\((pp?)\. ?(\d+)(?:\s*[-–,]\s*\d+)*\)/g, (match, _p, first) => `[${match}](#page-${first})`)
 
 function Message({ text, isUser, isStreaming }: MessageProps) {
     const [copied, setCopied] = useState(false)
