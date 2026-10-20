@@ -32,7 +32,7 @@ Chat with your PDFs. Upload a document, ask questions in plain language, and get
    GROQ_API_KEY=<from console.groq.com>
    ```
 
-   Optional: `STRIPE_SECRET_KEY`, `STRIPE_PRO_PRICE_ID`, `STRIPE_BUSINESS_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` (billing) and `RESEND_API_KEY`, `EMAIL_FROM` (emails; without them, links are printed to the server console).
+   Optional: `GEMINI_OCR_MODEL`, `GROQ_MODEL`, `GEMINI_EMBEDDING_MODEL` (override the default models), `STRIPE_SECRET_KEY`, `STRIPE_PRO_PRICE_ID`, `STRIPE_BUSINESS_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` (billing) and `RESEND_API_KEY`, `EMAIL_FROM` (emails; without them, links are printed to the server console).
 
 4. Apply migrations (the Prisma CLI reads `.env`, so pass the URL inline or copy it there):
 
@@ -49,6 +49,17 @@ Chat with your PDFs. Upload a document, ask questions in plain language, and get
 ## Email
 
 Password-reset and verification emails go through [Resend](https://resend.com). Sign up with `palter.bt@gmail.com`, create an API key and set `RESEND_API_KEY`. Without a verified domain, Resend only delivers to your own account email from its default `onboarding@resend.dev` sender, which is fine for testing. To email real users, verify a domain in Resend and set `EMAIL_FROM="Otterly <hello@yourdomain.com>"`. Replies go to the support address in `src/config/site.ts`.
+
+## Features
+
+- **Chat with a PDF** with streaming answers and clickable page citations
+- **OCR** for scanned PDFs (Gemini vision), plus an auto summary, key points and suggested questions per document
+- **Ask AI**: chat across several documents at once, with document-and-page citations
+- **Search**: semantic search across every document, opening the match at the right page
+- **Saved answers**: bookmark answers from any chat, add notes, export to Markdown
+- **Usage**: tokens per day, app vs API split and per-document usage
+- **API and webhooks**: signed `document.ready` / `document.failed` events with retries
+- **Plans and billing**: Free, Pro and Business via Stripe
 
 ## Scripts
 
@@ -75,6 +86,8 @@ Create a key under **API** in the dashboard and send it as `Authorization: Beare
 - `POST /api/v1/chat`: ask a question. Options: `stream` (server-sent events), `history`, `store`, `max_sources`, `instructions`. Returns the answer, cited `sources` and token `usage`
 - `GET /api/v1/usage`: plan usage
 - `GET /api/v1/openapi.json`: the full spec
+
+Webhooks are managed in the dashboard. Each request carries an `Otterly-Signature: t=<unix>,v1=<hmac-sha256 of "t.body">` header; verify it with your endpoint's signing secret.
 
 ## Learn more
 

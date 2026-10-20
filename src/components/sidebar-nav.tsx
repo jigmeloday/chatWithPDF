@@ -2,48 +2,47 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
-import { FileText, KeyRound, LayoutDashboard, Settings, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
-
-// `also` lists extra path prefixes that keep a link highlighted: opening a file (/dashboard/<id>) counts as Documents.
-const LINKS = [
-    { href: '/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
-    { href: '/documents', label: 'Documents', icon: FileText, also: ['/dashboard/'] },
-    { href: '/developers', label: 'API', icon: KeyRound },
-    { href: '/settings', label: 'Settings', icon: Settings },
-];
+import { NAV_GROUPS, isNavActive } from '@/config/nav';
 
 export function SidebarLinks() {
     const pathname = usePathname();
 
     return (
-        <nav className='flex flex-col gap-1'>
-            {LINKS.map(({ href, label, icon: Icon, exact, also = [] }) => {
-                const active = exact
-                    ? pathname === href
-                    : pathname === href || pathname.startsWith(`${href}/`) || also.some((p) => pathname.startsWith(p));
-                return (
-                    <Link
-                        key={href}
-                        href={href}
-                        className={cn(
-                            'relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                            active ? 'text-green-800' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
-                        )}>
-                        {active && (
-                            <motion.span
-                                layoutId='sidebar-active'
-                                className='absolute inset-0 rounded-lg bg-green-50'
-                                transition={{ type: 'spring', stiffness: 400, damping: 34 }}
-                            />
-                        )}
-                        <Icon className='relative h-4 w-4' />
-                        <span className='relative'>{label}</span>
-                    </Link>
-                );
-            })}
+        <nav className='flex flex-col gap-5'>
+            {NAV_GROUPS.map((group) => (
+                <div key={group.title}>
+                    <p className='mb-1.5 px-3 text-xs font-semibold uppercase tracking-wider text-zinc-400'>{group.title}</p>
+                    <div className='flex flex-col gap-0.5'>
+                        {group.items.map((item) => {
+                            const active = isNavActive(item, pathname);
+                            const Icon = item.icon;
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={cn(
+                                        'relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                                        active ? 'text-green-800' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
+                                    )}>
+                                    {active && (
+                                        <motion.span
+                                            layoutId='sidebar-active'
+                                            className='absolute inset-0 rounded-lg bg-green-50'
+                                            transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                                        />
+                                    )}
+                                    <Icon className='relative h-4 w-4' />
+                                    <span className='relative'>{item.label}</span>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                </div>
+            ))}
         </nav>
     );
 }

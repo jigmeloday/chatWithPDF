@@ -1,5 +1,6 @@
 'use client'
-import { useContext, useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { useToast } from '@/hooks/use-toast'
 import { Eraser, Loader2, Sparkles } from 'lucide-react'
 import { trpc } from '@/app/_trpc/client'
 import Message from './message'
@@ -15,6 +16,14 @@ const SUGGESTIONS = [
 function Messages({ fileId }: { fileId: string }) {
     const { data: messages, isLoading } = trpc.getMessages.useQuery({ fileId })
     const { data: insights } = trpc.getFileInsights.useQuery({ fileId })
+    const [savedIds, setSavedIds] = useState<Set<string>>(new Set())
+    const { toast } = useToast()
+    const { mutate: saveAnswer } = trpc.saveAnswer.useMutation({
+        onSuccess: () => {
+            utils.getUsage.invalidate()
+            toast({ title: 'Saved', description: 'Find it under Saved in the sidebar.' })
+        },
+    })
     const { pendingQuestion, pendingAnswer, addMessage, isLoading: isSending } = useContext(ChatContext)
     const endRef = useRef<HTMLDivElement>(null)
     const utils = trpc.useContext()
@@ -87,8 +96,19 @@ function Messages({ fileId }: { fileId: string }) {
                     <Eraser className='h-3.5 w-3.5' /> Clear chat
                 </button>
             )}
-            {messages?.map((m) => (
-                <Message key={m.id} text={m.text} isUser={m.isUserMessage} />
+            {messages?.map((m, i) => (
+                <Message
+                    key={m.id}
+                    text={m.text}
+                    isUser={m.isUserMessage}
+                    saved={savedIds.has(m.id)}
+                    onSave={() => {
+                        // The question is the message right before this answer.
+                        const question = messages[i - 1]?.isUserMessage ? messages[i - 1].text : ''
+                        setSavedIds((s) => new Set(s).add(m.id))
+                        saveAnswer({ fileId, question, answer: m.text })
+                    }}
+                />
             ))}
             {pendingQuestion && <Message text={pendingQuestion} isUser />}
             {pendingQuestion && <Message text={pendingAnswer} isUser={false} isStreaming />}

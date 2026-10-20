@@ -18,8 +18,7 @@ function AppShell({ user, children }: AppShellProps) {
                     </span>
                     Otterly
                 </Link>
-                <p className='mt-6 px-3 text-xs font-semibold uppercase tracking-wider text-zinc-400'>Menu</p>
-                <div className='mt-2 flex-1'>
+                <div className='mt-6 flex-1 overflow-y-auto pr-1'>
                     <SidebarLinks />
                 </div>
                 <div className='mb-4'>

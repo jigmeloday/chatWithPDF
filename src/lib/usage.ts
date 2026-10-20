@@ -56,6 +56,10 @@ export const getUsageSummary = async (userId: string): Promise<UsageSummary> => 
     };
 };
 
+// Timestamp columns hold UTC without a time zone, but the database session may run in another zone.
+// Comparing them with a Date parameter silently shifts by that offset, so compare as naive UTC text.
+export const utcNaive = (d: Date) => d.toISOString().replace('Z', '');
+
 export interface DailyTokens {
     date: string;
     tokens: number;
@@ -68,10 +72,10 @@ export const getDailyTokens = async (userId: string, days = 7): Promise<DailyTok
     since.setUTCDate(since.getUTCDate() - (days - 1));
 
     const rows = await db.$queryRaw<{ day: string; tokens: number }[]>`
-        select to_char("createdAt" at time zone 'UTC', 'YYYY-MM-DD') as day,
+        select to_char("createdAt", 'YYYY-MM-DD') as day,
                coalesce(sum("inputTokens" + "outputTokens"), 0)::int as tokens
         from "Message"
-        where "userId" = ${userId} and "createdAt" >= ${since}
+        where "userId" = ${userId} and "createdAt" >= ${utcNaive(since)}::timestamp
         group by 1`;
     const byDay = new Map(rows.map((r) => [r.day, r.tokens]));
 
