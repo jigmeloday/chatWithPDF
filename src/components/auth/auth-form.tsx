@@ -32,6 +32,7 @@ function AuthForm({ mode }: AuthFormProps) {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [verifyEmail, setVerifyEmail] = useState<string | null>(null);
     const isSignUp = mode === 'sign-up';
     const query = origin ? `?origin=${encodeURIComponent(origin)}` : '';
 
@@ -51,6 +52,12 @@ function AuthForm({ mode }: AuthFormProps) {
 
         if (error) {
             setError(error.message ?? 'Something went wrong');
+            return;
+        }
+
+        // With email verification on, sign-up doesn't start a session until the link is clicked.
+        if (isSignUp && !(await authClient.getSession()).data) {
+            setVerifyEmail(email);
             return;
         }
         router.push(`/auth-callback${query}`);
@@ -92,6 +99,14 @@ function AuthForm({ mode }: AuthFormProps) {
                             : 'Sign in to pick up where you left off.'}
                     </p>
 
+                    {verifyEmail ? (
+                        <div className='mt-8 rounded-xl border border-green-200 bg-green-50 p-5 text-sm text-green-900'>
+                            <p className='font-semibold'>Check your inbox</p>
+                            <p className='mt-1'>
+                                We sent a verification link to <b>{verifyEmail}</b>. Click it to finish creating your account.
+                            </p>
+                        </div>
+                    ) : (
                     <form onSubmit={onSubmit} className='mt-8 flex flex-col gap-4'>
                         {isSignUp && (
                             <Field label='Name'>
@@ -139,6 +154,12 @@ function AuthForm({ mode }: AuthFormProps) {
                             </div>
                         </Field>
 
+                        {!isSignUp && (
+                            <Link href='/forgot-password' className='-mt-2 self-end text-sm text-green-700 hover:underline'>
+                                Forgot password?
+                            </Link>
+                        )}
+
                         {error && (
                             <p
                                 role='alert'
@@ -152,6 +173,7 @@ function AuthForm({ mode }: AuthFormProps) {
                             {isSignUp ? 'Create account' : 'Sign in'}
                         </Button>
                     </form>
+                    )}
 
                     <p className='mt-6 text-center text-sm text-zinc-600'>
                         {isSignUp ? 'Already have an account?' : 'New to DocuChatty?'}{' '}

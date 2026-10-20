@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, LogOut } from 'lucide-react';
+import { LayoutDashboard, LogOut, Settings } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 import {
     DropdownMenu,
@@ -43,6 +43,11 @@ function UserMenu({ name, email }: UserMenuProps) {
                 <DropdownMenuItem asChild>
                     <Link href='/dashboard' className='cursor-pointer'>
                         <LayoutDashboard className='mr-2 h-4 w-4' /> Overview
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href='/settings' className='cursor-pointer'>
+                        <Settings className='mr-2 h-4 w-4' /> Settings
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={signOut} className='cursor-pointer text-red-600 focus:text-red-600'>

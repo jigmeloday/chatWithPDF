@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { FileText, KeyRound, LayoutDashboard, LogOut } from 'lucide-react';
+import { FileText, KeyRound, LayoutDashboard, Settings, LogOut } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
@@ -10,6 +10,7 @@ const LINKS = [
     { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
     { href: '/documents', label: 'Documents', icon: FileText },
     { href: '/developers', label: 'API', icon: KeyRound },
+    { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function SidebarLinks() {

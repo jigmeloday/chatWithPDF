@@ -5,12 +5,16 @@ import { getSessionUser } from '@/lib/auth';
 import { processDocument } from '@/lib/process-document';
 import { storage } from '@/lib/storage';
 import { getUsageSummary } from '@/lib/usage';
+import { rateLimit, tooManyRequests } from '@/lib/rate-limit';
 
 const MAX_SIZE = 4 * 1024 * 1024;
 
 export const POST = async (req: NextRequest) => {
     const user = await getSessionUser();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const limit = rateLimit(`upload:${user.id}`, 10);
+    if (!limit.ok) return tooManyRequests(limit.retryAfter, true);
 
     const usage = await getUsageSummary(user.id);
     if (usage.documentsUsed >= usage.documentLimit)

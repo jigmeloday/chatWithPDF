@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { authenticateApiKey } from '@/lib/api-keys';
+import { API_RATE_LIMIT_PER_MINUTE, authenticateApiKey } from '@/lib/api-keys';
+import { rateLimit, tooManyRequests } from '@/lib/rate-limit';
 import { getUsageSummary } from '@/lib/usage';
 import { db } from '@/db';
 import { answerQuestion } from '@/lib/chat';
@@ -9,6 +10,9 @@ const Body = z.object({ document_id: z.string(), message: z.string().min(1) });
 export const POST = async (req: Request) => {
     const userId = await authenticateApiKey(req);
     if (!userId) return Response.json({ error: 'Invalid or missing API key' }, { status: 401 });
+
+    const limit = rateLimit(`api:${userId}`, API_RATE_LIMIT_PER_MINUTE);
+    if (!limit.ok) return tooManyRequests(limit.retryAfter, true);
 
     const body = Body.safeParse(await req.json().catch(() => null));
     if (!body.success) return Response.json({ error: 'document_id and message are required' }, { status: 400 });

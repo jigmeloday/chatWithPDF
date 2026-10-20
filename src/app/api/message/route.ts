@@ -4,12 +4,16 @@ import { SendMessageValidator } from '@/lib/validator/send-message-validator';
 import { db } from '@/db';
 import { getUsageSummary } from '@/lib/usage';
 import { answerQuestion } from '@/lib/chat';
+import { rateLimit, tooManyRequests } from '@/lib/rate-limit';
 
 // Streams the answer as plain text.
 export const POST = async (req: NextRequest) => {
     const user = await getSessionUser();
     if ( !user ) return new Response('Unauthorized', { status: 401 })
     const userId = user.id
+
+    const limit = rateLimit(`chat:${userId}`, 20)
+    if ( !limit.ok ) return tooManyRequests(limit.retryAfter)
 
     const body = SendMessageValidator.safeParse(await req.json().catch(() => null))
     if ( !body.success ) return new Response('Invalid request', { status: 400 })

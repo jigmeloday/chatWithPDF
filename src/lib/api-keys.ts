@@ -11,6 +11,8 @@ export const generateApiKey = () => {
     return { key, prefix: key.slice(0, KEY_PREFIX.length + 4), hash: hashKey(key) };
 };
 
+export const API_RATE_LIMIT_PER_MINUTE = 60;
+
 export const authenticateApiKey = async (req: Request): Promise<string | null> => {
     const key = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
     if (!key?.startsWith(KEY_PREFIX)) return null;
