@@ -1,4 +1,4 @@
-import { BarChart3, Bookmark, FileText, KeyRound, LayoutDashboard, Layers, Search, Settings, Webhook, LucideIcon } from 'lucide-react';
+import { BarChart3, Bookmark, CreditCard, FileText, KeyRound, LayoutDashboard, Layers, Search, Settings, Webhook, LucideIcon } from 'lucide-react';
 
 export interface NavItem {
     href: string;
@@ -34,7 +34,10 @@ export const NAV_GROUPS: { title: string; items: NavItem[] }[] = [
     },
     {
         title: 'Account',
-        items: [{ href: '/settings', label: 'Settings', icon: Settings }],
+        items: [
+            { href: '/billing', label: 'Billing', icon: CreditCard },
+            { href: '/settings', label: 'Settings', icon: Settings },
+        ],
     },
 ];
 

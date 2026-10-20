@@ -74,7 +74,7 @@ export function SidebarUsage() {
     const pct = Math.min(100, (data.tokensUsed / data.tokenLimit) * 100);
     return (
         <Link
-            href={data.plan.slug === 'business' ? '/dashboard' : '/pricing'}
+            href='/billing'
             className='block rounded-xl bg-zinc-50 p-3 ring-1 ring-zinc-950/5 transition hover:bg-zinc-100'>
             <div className='flex items-center justify-between text-xs'>
                 <span className='font-medium text-zinc-700'>{data.plan.name} plan</span>

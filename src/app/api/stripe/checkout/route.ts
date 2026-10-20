@@ -28,7 +28,7 @@ export const POST = async (req: Request) => {
 
     // Already subscribed: changing plans happens in the billing portal, so we never double-bill.
     if (record.stripeSubscriptionId) {
-        const portal = await stripe.billingPortal.sessions.create({ customer: customerId, return_url: `${siteUrl()}/settings` });
+        const portal = await stripe.billingPortal.sessions.create({ customer: customerId, return_url: `${siteUrl()}/billing` });
         return Response.json({ url: portal.url });
     }
 
@@ -36,8 +36,8 @@ export const POST = async (req: Request) => {
         mode: 'subscription',
         customer: customerId,
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url: `${siteUrl()}/dashboard?upgraded=1`,
-        cancel_url: `${siteUrl()}/pricing`,
+        success_url: `${siteUrl()}/billing?upgraded=1`,
+        cancel_url: `${siteUrl()}/billing`,
         client_reference_id: user.id,
     });
     return Response.json({ url: session.url });

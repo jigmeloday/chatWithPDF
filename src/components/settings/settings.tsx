@@ -1,32 +1,49 @@
 'use client';
-import { FormEvent, useState } from 'react';
+import { FormEvent, ReactNode, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { format } from 'date-fns';
-import { Loader2 } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertTriangle, Loader2, Lock, LifeBuoy, User } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
-import { trpc } from '@/app/_trpc/client';
-import Link from 'next/link';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import BillingButton from '@/components/billing-button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog';
+import { EASE } from '@/components/motion';
 import { useToast } from '@/hooks/use-toast';
 import { SUPPORT_EMAIL } from '@/config/site';
+import { cn } from '@/lib/utils';
 
-function Section({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
+const TABS = [
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'security', label: 'Security', icon: Lock },
+    { id: 'help', label: 'Help', icon: LifeBuoy },
+    { id: 'danger', label: 'Danger zone', icon: AlertTriangle },
+] as const;
+type Tab = (typeof TABS)[number]['id'];
+
+function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
     return (
-        <section className='rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-950/5'>
+        <label className='block'>
+            <span className='text-sm font-medium text-zinc-800'>{label}</span>
+            <div className='mt-1.5'>{children}</div>
+            {hint && <span className='mt-1 block text-xs text-zinc-500'>{hint}</span>}
+        </label>
+    );
+}
+
+function Panel({ title, description, children }: { title: string; description: string; children: ReactNode }) {
+    return (
+        <div className='rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-950/5'>
             <h2 className='text-lg font-semibold text-zinc-900'>{title}</h2>
             <p className='mt-1 text-sm text-zinc-500'>{description}</p>
-            <div className='mt-5'>{children}</div>
-        </section>
+            <div className='mt-6'>{children}</div>
+        </div>
     );
 }
 
 function Settings({ name, email }: { name: string; email: string }) {
     const router = useRouter();
     const { toast } = useToast();
-    const { data: usage } = trpc.getUsage.useQuery();
+    const [tab, setTab] = useState<Tab>('profile');
     const [busy, setBusy] = useState<string | null>(null);
     const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -34,7 +51,10 @@ function Settings({ name, email }: { name: string; email: string }) {
         setBusy(key);
         const { error } = await fn();
         setBusy(null);
-        if (error) return toast({ title: 'Something went wrong', description: error.message, variant: 'destructive' });
+        if (error) {
+            toast({ title: 'Something went wrong', description: error.message, variant: 'destructive' });
+            return false;
+        }
         toast({ title: success });
         router.refresh();
         return true;
@@ -52,12 +72,7 @@ function Settings({ name, email }: { name: string; email: string }) {
         const data = new FormData(form);
         const ok = await run(
             'password',
-            () =>
-                authClient.changePassword({
-                    currentPassword: String(data.get('current')),
-                    newPassword: String(data.get('next')),
-                    revokeOtherSessions: true,
-                }),
+            () => authClient.changePassword({ currentPassword: String(data.get('current')), newPassword: String(data.get('next')), revokeOtherSessions: true }),
             'Password changed'
         );
         if (ok) form.reset();
@@ -72,70 +87,104 @@ function Settings({ name, email }: { name: string; email: string }) {
     };
 
     return (
-        <main className='mx-auto max-w-3xl space-y-6 px-4 py-6 md:px-8 md:py-8'>
-            <div>
-                <p className='text-sm font-medium text-green-700'>Account</p>
-                <h1 className='mt-1 text-3xl font-bold tracking-tight text-zinc-900 md:text-4xl'>Settings</h1>
+        <main className='mx-auto max-w-3xl px-4 py-6 md:px-8 md:py-8'>
+            <p className='text-sm font-medium text-green-700'>Account</p>
+            <h1 className='mt-1 text-3xl font-bold tracking-tight text-zinc-900 md:text-4xl'>Settings</h1>
+
+            <div className='mt-6 flex items-center gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-zinc-950/5'>
+                <span className='flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-emerald-700 text-xl font-semibold text-white shadow-sm'>
+                    {(name || email).charAt(0).toUpperCase()}
+                </span>
+                <div className='min-w-0'>
+                    <p className='truncate text-lg font-semibold text-zinc-900'>{name || 'Your account'}</p>
+                    <p className='truncate text-sm text-zinc-500'>{email}</p>
+                </div>
             </div>
 
-            <Section title='Profile' description='Your name appears in the sidebar and greeting.'>
-                <form onSubmit={saveProfile} className='flex max-w-md flex-col gap-3'>
-                    <label className='text-sm font-medium text-zinc-700'>Email
-                        <Input value={email} disabled className='mt-1.5 h-10' />
-                    </label>
-                    <label className='text-sm font-medium text-zinc-700'>Name
-                        <Input name='name' defaultValue={name} required className='mt-1.5 h-10' />
-                    </label>
-                    <Button type='submit' disabled={busy === 'profile'} className='w-fit'>
-                        {busy === 'profile' && <Loader2 className='mr-2 h-4 w-4 animate-spin' />} Save changes
-                    </Button>
-                </form>
-            </Section>
+            <div role='tablist' className='mt-6 flex gap-1 overflow-x-auto border-b border-zinc-200'>
+                {TABS.map(({ id, label, icon: Icon }) => (
+                    <button
+                        key={id}
+                        role='tab'
+                        aria-selected={tab === id}
+                        onClick={() => setTab(id)}
+                        className={cn(
+                            'relative flex shrink-0 items-center gap-2 px-4 py-3 text-sm font-medium transition-colors',
+                            tab === id ? (id === 'danger' ? 'text-red-600' : 'text-green-800') : 'text-zinc-500 hover:text-zinc-900'
+                        )}>
+                        <Icon className='h-4 w-4' /> {label}
+                        {tab === id && (
+                            <motion.span
+                                layoutId='settings-tab'
+                                className={cn('absolute inset-x-0 -bottom-px h-0.5 rounded-full', id === 'danger' ? 'bg-red-500' : 'bg-green-600')}
+                                transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                            />
+                        )}
+                    </button>
+                ))}
+            </div>
 
-            <Section title='Plan' description='Your current subscription and what it includes.'>
-                {usage ? (
-                    <dl className='grid grid-cols-2 gap-4 text-sm sm:grid-cols-4'>
-                        <div><dt className='text-zinc-500'>Plan</dt><dd className='mt-1 font-semibold'>{usage.plan.name}</dd></div>
-                        <div><dt className='text-zinc-500'>Renews</dt><dd className='mt-1 font-semibold'>{format(new Date(usage.periodEnd), 'MMM d, yyyy')}</dd></div>
-                        <div><dt className='text-zinc-500'>Tokens</dt><dd className='mt-1 font-semibold'>{usage.tokensUsed.toLocaleString()} / {usage.tokenLimit.toLocaleString()}</dd></div>
-                        <div><dt className='text-zinc-500'>Documents</dt><dd className='mt-1 font-semibold'>{usage.documentsUsed} / {usage.documentLimit}</dd></div>
-                    </dl>
-                ) : (
-                    <p className='text-sm text-zinc-500'>Loading…</p>
-                )}
-                {usage && (
-                    <div className='mt-5'>
-                        <div className='flex flex-wrap gap-3'>
-                            {usage.plan.slug === 'free' ? (
-                                <BillingButton action='checkout' plan='pro'>Upgrade to Pro</BillingButton>
-                            ) : (
-                                <BillingButton action='portal' variant='outline'>Manage billing</BillingButton>
-                            )}
-                            <Link href='/pricing' className={buttonVariants({ variant: 'ghost' })}>Compare plans</Link>
+            <AnimatePresence mode='wait'>
+                <motion.div
+                    key={tab}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.2, ease: EASE }}
+                    className='mt-6'>
+                    {tab === 'profile' && (
+                        <Panel title='Profile' description='Your name appears in the sidebar and greeting.'>
+                            <form onSubmit={saveProfile} className='max-w-md space-y-5'>
+                                <Field label='Name'>
+                                    <Input name='name' defaultValue={name} required className='h-10' />
+                                </Field>
+                                <Field label='Email' hint='Your email is used to sign in and can’t be changed here.'>
+                                    <Input value={email} disabled className='h-10' />
+                                </Field>
+                                <Button type='submit' disabled={busy === 'profile'}>
+                                    {busy === 'profile' && <Loader2 className='mr-2 h-4 w-4 animate-spin' />} Save changes
+                                </Button>
+                            </form>
+                        </Panel>
+                    )}
+
+                    {tab === 'security' && (
+                        <Panel title='Password' description='Changing it signs you out of your other devices.'>
+                            <form onSubmit={changePassword} className='max-w-md space-y-5'>
+                                <Field label='Current password'>
+                                    <Input name='current' type='password' autoComplete='current-password' required className='h-10' />
+                                </Field>
+                                <Field label='New password' hint='At least 8 characters.'>
+                                    <Input name='next' type='password' minLength={8} autoComplete='new-password' required className='h-10' />
+                                </Field>
+                                <Button type='submit' disabled={busy === 'password'}>
+                                    {busy === 'password' && <Loader2 className='mr-2 h-4 w-4 animate-spin' />} Update password
+                                </Button>
+                            </form>
+                        </Panel>
+                    )}
+
+                    {tab === 'help' && (
+                        <Panel title='Help and feedback' description='Questions, problems or ideas? We read every message.'>
+                            <a href={`mailto:${SUPPORT_EMAIL}`} className='text-sm font-medium text-green-700 hover:underline'>
+                                {SUPPORT_EMAIL}
+                            </a>
+                        </Panel>
+                    )}
+
+                    {tab === 'danger' && (
+                        <div className='rounded-2xl bg-white p-6 shadow-sm ring-1 ring-red-200'>
+                            <h2 className='text-lg font-semibold text-red-700'>Delete account</h2>
+                            <p className='mt-1 text-sm text-zinc-600'>
+                                Permanently removes your account, documents, chats, saved answers, API keys and webhooks. This can&apos;t be undone.
+                            </p>
+                            <Button variant='destructive' className='mt-6' onClick={() => setConfirmDelete(true)}>
+                                Delete my account
+                            </Button>
                         </div>
-                    </div>
-                )}
-            </Section>
-
-            <Section title='Password' description='Changing it signs you out of your other devices.'>
-                <form onSubmit={changePassword} className='flex max-w-md flex-col gap-3'>
-                    <Input name='current' type='password' placeholder='Current password' autoComplete='current-password' required className='h-10' />
-                    <Input name='next' type='password' placeholder='New password (8+ characters)' minLength={8} autoComplete='new-password' required className='h-10' />
-                    <Button type='submit' disabled={busy === 'password'} className='w-fit'>
-                        {busy === 'password' && <Loader2 className='mr-2 h-4 w-4 animate-spin' />} Update password
-                    </Button>
-                </form>
-            </Section>
-
-            <Section title='Help' description='Questions, billing problems or feedback?'>
-                <a href={`mailto:${SUPPORT_EMAIL}`} className='text-sm font-medium text-green-700 hover:underline'>
-                    {SUPPORT_EMAIL}
-                </a>
-            </Section>
-
-            <Section title='Delete account' description='Permanently removes your account, documents, chats and API keys.'>
-                <Button variant='destructive' onClick={() => setConfirmDelete(true)}>Delete my account</Button>
-            </Section>
+                    )}
+                </motion.div>
+            </AnimatePresence>
 
             <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
                 <DialogContent>
