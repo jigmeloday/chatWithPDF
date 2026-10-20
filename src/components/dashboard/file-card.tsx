@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { format, formatDistanceToNow } from 'date-fns';
+import { motion } from 'framer-motion';
 import { ArrowUpRight, FileText, Loader2, MoreHorizontal, Pencil, RotateCw, Trash } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 export const STATUS_STYLES: Record<string, { label: string; pill: string; dot: string }> = {
     SUCCESS: { label: 'Ready', pill: 'bg-green-50 text-green-700 ring-green-600/20', dot: 'bg-green-500' },
@@ -33,6 +35,7 @@ export interface FileCardData {
     name: string;
     createdAt: string | Date;
     uploadStatus: string;
+    usedOcr?: boolean;
 }
 
 interface FileCardProps {
@@ -41,6 +44,7 @@ interface FileCardProps {
 }
 
 function FileCard({ file, view = 'grid' }: FileCardProps) {
+    const { toast } = useToast();
     const [confirming, setConfirming] = useState(false);
     const [renaming, setRenaming] = useState(false);
     const [newName, setNewName] = useState(file.name);
@@ -51,16 +55,21 @@ function FileCard({ file, view = 'grid' }: FileCardProps) {
             utils.getUsage.invalidate();
             utils.getActivity.invalidate();
             setConfirming(false);
+            toast({ title: 'Document deleted', description: `“${file.name}” and its chats were removed.` });
         },
     });
     const { mutate: renameFile, isLoading: isRenaming } = trpc.renameFile.useMutation({
         onSuccess: () => {
             utils.getUserFiles.invalidate();
             setRenaming(false);
+            toast({ title: 'Document renamed' });
         },
     });
     const { mutate: retryFile } = trpc.retryFile.useMutation({
-        onSuccess: () => utils.getUserFiles.invalidate(),
+        onSuccess: () => {
+            utils.getUserFiles.invalidate();
+            toast({ title: 'Reprocessing started', description: 'We’ll update the status when it finishes.' });
+        },
     });
     const status = STATUS_STYLES[file.uploadStatus] ?? STATUS_STYLES.PENDING;
     const created = new Date(file.createdAt);
@@ -108,11 +117,14 @@ function FileCard({ file, view = 'grid' }: FileCardProps) {
     );
 
     return (
-        <li
-            className={cn(
-                'group relative rounded-2xl bg-white shadow-sm ring-1 ring-zinc-950/5 transition hover:shadow-md hover:ring-green-500/40',
-                view === 'grid' && 'hover:-translate-y-0.5'
-            )}>
+        <motion.li
+            layout
+            initial={{ opacity: 0, scale: 0.96, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.94 }}
+            whileHover={view === 'grid' ? { y: -3 } : undefined}
+            transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+            className='group relative rounded-2xl bg-white shadow-sm ring-1 ring-zinc-950/5 hover:shadow-md hover:ring-green-500/40'>
             {view === 'grid' ? (
                 <>
                     <Link href={`/dashboard/${file.id}`} className='flex flex-col gap-5 p-5'>
@@ -126,7 +138,10 @@ function FileCard({ file, view = 'grid' }: FileCardProps) {
                             </div>
                         </div>
                         <div className='flex items-center justify-between'>
-                            {pill}
+                            <span className='flex items-center gap-1.5'>
+                                {pill}
+                                {file.usedOcr && <span title='Scanned PDF read with OCR' className='rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600'>OCR</span>}
+                            </span>
                             <span className='flex items-center gap-1 text-sm font-medium text-green-700 opacity-0 transition group-hover:opacity-100'>
                                 Open <ArrowUpRight className='h-4 w-4' />
                             </span>
@@ -188,7 +203,7 @@ function FileCard({ file, view = 'grid' }: FileCardProps) {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </li>
+        </motion.li>
     );
 }
 

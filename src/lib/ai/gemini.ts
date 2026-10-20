@@ -15,6 +15,8 @@ const embedBatch = async (texts: string[], taskType: TaskType, attempt = 0): Pro
     const res = await fetch(`${API}/models/${MODEL}:batchEmbedContents`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+        signal: AbortSignal.timeout(60_000),
+        cache: 'no-store',
         body: JSON.stringify({
             requests: texts.map((text) => ({
                 model: `models/${MODEL}`,
@@ -51,3 +53,52 @@ export const embedTexts = async (texts: string[], taskType: TaskType = 'RETRIEVA
 };
 
 export const embedQuery = async (text: string) => (await embedTexts([text], 'RETRIEVAL_QUERY'))[0];
+
+const OCR_MODEL = process.env.GEMINI_OCR_MODEL ?? 'gemini-flash-lite-latest';
+
+export interface PageText {
+    page: number;
+    text: string;
+}
+
+// Reads a scanned or image-only PDF with Gemini's vision and returns the text of each page.
+export const ocrPdf = async (pdf: Buffer): Promise<PageText[]> => {
+    const apiKey = process.env.GOOGLE_API_KEY;
+    if (!apiKey) throw new Error('GOOGLE_API_KEY is not set');
+
+    const res = await fetch(`${API}/models/${OCR_MODEL}:generateContent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+        signal: AbortSignal.timeout(240_000),
+        cache: 'no-store',
+        body: JSON.stringify({
+            contents: [
+                {
+                    parts: [
+                        { inline_data: { mime_type: 'application/pdf', data: pdf.toString('base64') } },
+                        {
+                            text:
+                                'Transcribe all text in this PDF exactly as written, in reading order. ' +
+                                'Begin each page with a line of the form "=== Page N ===". ' +
+                                'Do not summarize, translate or add commentary. If a page has no text, output only its marker.',
+                        },
+                    ],
+                },
+            ],
+            generationConfig: { temperature: 0 },
+        }),
+    });
+    if (!res.ok) throw new Error(`Gemini OCR failed (${res.status}): ${await res.text()}`);
+
+    const json = await res.json();
+    const text: string = json.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text ?? '').join('') ?? '';
+
+    const pages: PageText[] = [];
+    const parts = text.split(/^=== Page (\d+) ===\s*$/m);
+    // split() with a capture group yields [preamble, "1", text1, "2", text2, ...]
+    for (let i = 1; i < parts.length; i += 2) pages.push({ page: Number(parts[i]), text: parts[i + 1].trim() });
+
+    // The model ignored the markers: treat everything as one page rather than losing the text.
+    if (!pages.length && text.trim()) pages.push({ page: 1, text: text.trim() });
+    return pages;
+};

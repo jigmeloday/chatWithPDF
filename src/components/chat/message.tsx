@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { Check, Copy } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Bookmark, BookmarkCheck, Check, Copy } from 'lucide-react'
 import { linkCitations } from '@/lib/citations'
 import { cn } from '@/lib/utils'
 
@@ -8,9 +9,13 @@ interface MessageProps {
     text: string
     isUser: boolean
     isStreaming?: boolean
+    /** Turn "(p. 3)" into links that jump the PDF viewer. Only meaningful next to a viewer. */
+    citations?: boolean
+    onSave?: () => void
+    saved?: boolean
 }
 
-function Message({ text, isUser, isStreaming }: MessageProps) {
+function Message({ text, isUser, isStreaming, citations = true, onSave, saved }: MessageProps) {
     const [copied, setCopied] = useState(false)
 
     const copy = async () => {
@@ -20,7 +25,12 @@ function Message({ text, isUser, isStreaming }: MessageProps) {
     }
 
     return(
-        <div className={cn('group flex items-end gap-1.5', isUser ? 'justify-end' : 'justify-start')}>
+        <motion.div
+            initial={{ opacity: 0, y: 12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+            style={{ originX: isUser ? 1 : 0 }}
+            className={cn('group flex items-end gap-1.5', isUser ? 'justify-end' : 'justify-start')}>
             <div
                 className={cn(
                     'max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm',
@@ -48,7 +58,7 @@ function Message({ text, isUser, isStreaming }: MessageProps) {
                                 )
                             },
                         }}>
-                        {linkCitations(text)}
+                        {citations ? linkCitations(text) : text}
                     </ReactMarkdown>
                 ) : null}
                 {isStreaming && !text && (
@@ -64,14 +74,25 @@ function Message({ text, isUser, isStreaming }: MessageProps) {
                 )}
             </div>
             {!isUser && text && !isStreaming && (
-                <button
-                    onClick={copy}
-                    aria-label='Copy answer'
-                    className='mb-1 rounded-md p-1.5 text-zinc-400 opacity-0 transition hover:bg-zinc-200 hover:text-zinc-700 group-hover:opacity-100'>
-                    {copied ? <Check className='h-3.5 w-3.5' /> : <Copy className='h-3.5 w-3.5' />}
-                </button>
+                <div className='mb-1 flex flex-col gap-0.5 opacity-0 transition group-hover:opacity-100'>
+                    <button
+                        onClick={copy}
+                        aria-label='Copy answer'
+                        className='rounded-md p-1.5 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-700'>
+                        {copied ? <Check className='h-3.5 w-3.5' /> : <Copy className='h-3.5 w-3.5' />}
+                    </button>
+                    {onSave && (
+                        <button
+                            onClick={onSave}
+                            disabled={saved}
+                            aria-label={saved ? 'Saved' : 'Save answer'}
+                            className='rounded-md p-1.5 text-zinc-400 hover:bg-zinc-200 hover:text-green-700 disabled:text-green-600'>
+                            {saved ? <BookmarkCheck className='h-3.5 w-3.5' /> : <Bookmark className='h-3.5 w-3.5' />}
+                        </button>
+                    )}
+                </div>
             )}
-        </div>
+        </motion.div>
     )
 }
 

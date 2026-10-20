@@ -4,12 +4,14 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { AlertTriangle, ArrowRight, FileText, KeyRound, MessageSquare, Sparkles, UploadCloud } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
 import UploadButton from '@/components/upload-button';
+import { EASE, Stagger, StaggerItem } from '@/components/motion';
+import { motion } from 'framer-motion';
 import BillingButton from '@/components/billing-button';
-import { PLANS } from '@/config/plans';
+import { nextPlan } from '@/config/plans';
 import { cn } from '@/lib/utils';
 
 const tileClass =
-    'group flex w-full items-start gap-4 rounded-2xl bg-white p-5 text-left shadow-sm ring-1 ring-zinc-950/5 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-green-500/40';
+    'group flex h-full w-full items-start gap-4 rounded-2xl bg-white p-5 text-left shadow-sm ring-1 ring-zinc-950/5 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-green-500/40';
 
 function Tile({ icon: Icon, title, hint }: { icon: typeof FileText; title: string; hint: string }) {
     return (
@@ -33,30 +35,38 @@ export function QuickActions() {
         .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))[0];
 
     return (
-        <div className='mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4'>
-            <UploadButton
-                trigger={
-                    <button className={tileClass}>
-                        <Tile icon={UploadCloud} title='Upload a PDF' hint='Drag and drop, up to 4MB' />
-                    </button>
-                }
-            />
-            {lastReady ? (
-                <Link href={`/dashboard/${lastReady.id}`} className={tileClass}>
-                    <Tile icon={MessageSquare} title='Continue chatting' hint={lastReady.name} />
+        <Stagger onMount delay={0.15} className='mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4'>
+            <StaggerItem className='h-full'>
+                <UploadButton
+                    trigger={
+                        <button className={tileClass}>
+                            <Tile icon={UploadCloud} title='Upload a PDF' hint='Drag and drop, up to 4MB' />
+                        </button>
+                    }
+                />
+            </StaggerItem>
+            <StaggerItem className='h-full'>
+                {lastReady ? (
+                    <Link href={`/dashboard/${lastReady.id}`} className={tileClass}>
+                        <Tile icon={MessageSquare} title='Continue chatting' hint={lastReady.name} />
+                    </Link>
+                ) : (
+                    <div className={cn(tileClass, 'cursor-not-allowed opacity-60 hover:translate-y-0 hover:shadow-sm hover:ring-zinc-950/5')}>
+                        <Tile icon={MessageSquare} title='Continue chatting' hint='Upload a document first' />
+                    </div>
+                )}
+            </StaggerItem>
+            <StaggerItem className='h-full'>
+                <Link href='/documents' className={tileClass}>
+                    <Tile icon={FileText} title='Browse documents' hint={`${files?.length ?? 0} in your library`} />
                 </Link>
-            ) : (
-                <div className={cn(tileClass, 'cursor-not-allowed opacity-60 hover:translate-y-0 hover:shadow-sm hover:ring-zinc-950/5')}>
-                    <Tile icon={MessageSquare} title='Continue chatting' hint='Upload a document first' />
-                </div>
-            )}
-            <Link href='/documents' className={tileClass}>
-                <Tile icon={FileText} title='Browse documents' hint={`${files?.length ?? 0} in your library`} />
-            </Link>
-            <Link href='/developers' className={tileClass}>
-                <Tile icon={KeyRound} title='Create API key' hint='Use your documents from code' />
-            </Link>
-        </div>
+            </StaggerItem>
+            <StaggerItem className='h-full'>
+                <Link href='/developers' className={tileClass}>
+                    <Tile icon={KeyRound} title='Create API key' hint='Use your documents from code' />
+                </Link>
+            </StaggerItem>
+        </Stagger>
     );
 }
 
@@ -66,12 +76,12 @@ export function TokenChart() {
     const total = (data ?? []).reduce((sum, d) => sum + d.tokens, 0);
 
     return (
-        <section className='rounded-2xl bg-white p-5 shadow-sm ring-1 ring-zinc-950/5 lg:col-span-2'>
+        <section className='flex flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-zinc-950/5 lg:col-span-2'>
             <div className='flex items-baseline justify-between'>
                 <h2 className='font-semibold text-zinc-900'>Token usage</h2>
                 <span className='text-sm text-zinc-500'>Last 7 days · {total.toLocaleString()} tokens</span>
             </div>
-            <div className='relative mt-6 h-44'>
+            <div className='relative mt-6 min-h-[11rem] flex-1'>
                 <div className='absolute inset-x-0 top-0 flex h-[calc(100%-1.5rem)] flex-col justify-between'>
                     {[0, 1, 2, 3].map((i) => (
                         <div key={i} className='border-t border-dashed border-zinc-200' />
@@ -86,16 +96,18 @@ export function TokenChart() {
                                         {d.tokens.toLocaleString()}
                                     </span>
                                 )}
-                                <div
+                                <motion.div
+                                    initial={{ height: '0%' }}
+                                    animate={{ height: `${d ? Math.max(3, (d.tokens / max) * 100) : 30}%` }}
+                                    transition={{ duration: 0.8, ease: EASE, delay: i * 0.06 }}
                                     className={cn(
-                                        'w-full rounded-t-lg transition-all duration-500',
+                                        'w-full rounded-t-lg',
                                         isLoading
                                             ? 'animate-pulse bg-zinc-100'
                                             : d?.tokens
                                               ? 'bg-gradient-to-t from-green-700 to-green-400'
                                               : 'bg-zinc-100'
                                     )}
-                                    style={{ height: `${d ? Math.max(3, (d.tokens / max) * 100) : 30}%` }}
                                 />
                             </div>
                             <span className='h-4 text-xs text-zinc-500'>{d ? format(new Date(d.date), 'EEE') : ''}</span>
@@ -112,28 +124,32 @@ export function TokenChart() {
 
 export function PlanCard() {
     const { data } = trpc.getUsage.useQuery();
-    const isFree = !data || data.plan.slug === 'free';
-    const pro = PLANS.pro;
+    const next = data ? nextPlan(data.plan.slug) : undefined;
+    const target = next ?? data?.plan;
 
     return (
         <section className='rounded-2xl bg-gradient-to-br from-green-50 to-white p-5 shadow-sm ring-1 ring-green-600/15'>
             <div className='flex items-center gap-2 text-green-700'>
                 <Sparkles className='h-4 w-4' />
-                <h2 className='font-semibold'>{isFree ? `Upgrade to ${pro.name}` : `You're on ${pro.name}`}</h2>
+                <h2 className='font-semibold'>{next ? `Upgrade to ${next.name}` : `You're on ${data?.plan.name ?? '…'}`}</h2>
             </div>
-            <ul className='mt-4 space-y-2 text-sm text-zinc-700'>
-                <li>{pro.tokensPerMonth.toLocaleString()} tokens every month</li>
-                <li>Up to {pro.maxDocuments} documents</li>
-                <li>${pro.price}/month, cancel anytime</li>
-            </ul>
-            {isFree ? (
-                <BillingButton action='checkout' className='mt-5 w-full'>
-                    Upgrade to Pro
+            {target && (
+                <ul className='mt-4 space-y-2 text-sm text-zinc-700'>
+                    <li>{target.tokensPerMonth.toLocaleString()} tokens every month</li>
+                    <li>Up to {target.maxDocuments} documents</li>
+                    <li>{target.price ? `$${target.price}/month, cancel anytime` : 'Free forever'}</li>
+                </ul>
+            )}
+            {next ? (
+                <BillingButton action='checkout' plan={next.slug as 'pro' | 'business'} className='mt-5 w-full'>
+                    Upgrade to {next.name}
                 </BillingButton>
             ) : (
-                <BillingButton action='portal' variant='outline' className='mt-5 w-full'>
-                    Manage billing
-                </BillingButton>
+                data && data.plan.slug !== 'free' && (
+                    <BillingButton action='portal' variant='outline' className='mt-5 w-full'>
+                        Manage billing
+                    </BillingButton>
+                )
             )}
         </section>
     );

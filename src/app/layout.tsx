@@ -2,12 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from '@/lib/utils';
-import NavBar from '@/components/nav-bar';
 import Provider from '@/components/provider';
 import { Toaster } from '@/components/ui/toaster';
-import Footer from '@/components/footer';
-import AppShell from '@/components/app-shell';
-import { getSessionUser } from '@/lib/auth';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,17 +17,16 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "DocuChatty: chat with your PDFs",
+  title: "Otterly: chat with your PDFs",
   description: "Upload a PDF and ask it questions. Get answers with page citations, plus an API for your own apps.",
 };
 
-export default async function RootLayout({
+// Only the document shell lives here. Each route group — (auth), (public) and (private) — adds its own chrome.
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getSessionUser();
-
   return (
     <html lang="en">
       <Provider>
@@ -39,15 +34,7 @@ export default async function RootLayout({
             className={cn(geistSans.variable, geistMono.variable, 'antialiased min-h-screen font-sans grainy' )}
         >
         <Toaster />
-        {user ? (
-          <AppShell user={user}>{children}</AppShell>
-        ) : (
-          <>
-            <NavBar />
-            {children}
-            <Footer />
-          </>
-        )}
+        {children}
         </body>
       </Provider>
     </html>

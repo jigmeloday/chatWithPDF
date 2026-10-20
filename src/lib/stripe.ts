@@ -1,7 +1,9 @@
 import Stripe from 'stripe';
 import { db } from '@/db';
+import { PLAN_ORDER, PLANS, getPlanPriceId } from '@/config/plans';
 
-export const billingEnabled = () => !!process.env.STRIPE_SECRET_KEY && !!process.env.STRIPE_PRO_PRICE_ID;
+export const billingEnabled = () =>
+    !!process.env.STRIPE_SECRET_KEY && PLAN_ORDER.some((s) => !!getPlanPriceId(PLANS[s]));
 
 let client: Stripe | undefined;
 export const getStripe = () => (client ??= new Stripe(process.env.STRIPE_SECRET_KEY!));
