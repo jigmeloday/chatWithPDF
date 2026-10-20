@@ -1,4 +1,4 @@
-# DocuChatty
+# Otterly
 
 Chat with your PDFs. Upload a document, ask questions in plain language, and get answers with page citations. Sold as a subscription with a monthly token allowance, plus an API.
 

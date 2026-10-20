@@ -149,7 +149,7 @@ function AuthForm({ mode }: AuthFormProps) {
                     )}
 
                     <p className='mt-6 text-center text-sm text-zinc-600'>
-                        {isSignUp ? 'Already have an account?' : 'New to DocuChatty?'}{' '}
+                        {isSignUp ? 'Already have an account?' : 'New to Otterly?'}{' '}
                         <Link
                             className='font-medium text-green-700 hover:underline'
                             href={`/${isSignUp ? 'sign-in' : 'sign-up'}${query}`}>

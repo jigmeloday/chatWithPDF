@@ -7,7 +7,7 @@ import { buttonVariants } from '@/components/ui/button';
 import BillingButton from '@/components/billing-button';
 import { cn } from '@/lib/utils';
 
-export const metadata = { title: 'Pricing · DocuChatty' };
+export const metadata = { title: 'Pricing · Otterly' };
 
 async function Page() {
     const user = await getSessionUser();

@@ -9,7 +9,7 @@ export const sendEmail = async ({ to, subject, html, text }: { to: string; subje
     const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.RESEND_API_KEY}` },
-        body: JSON.stringify({ from: process.env.EMAIL_FROM ?? 'DocuChatty <onboarding@resend.dev>', to, subject, html }),
+        body: JSON.stringify({ from: process.env.EMAIL_FROM ?? 'Otterly <onboarding@resend.dev>', to, subject, html }),
     });
     if (!res.ok) console.error('Email send failed:', res.status, await res.text());
 };

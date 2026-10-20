@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { PropsWithChildren } from 'react';
 import UserMenu from '@/components/user-menu';
+import PoweredBy from '@/components/powered-by';
 import { SidebarLinks, SidebarUsage, SignOutButton } from '@/components/sidebar-nav';
 
 interface AppShellProps extends PropsWithChildren {
@@ -13,9 +14,9 @@ function AppShell({ user, children }: AppShellProps) {
             <aside className='sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-zinc-200 bg-white/80 p-4 backdrop-blur-lg md:flex'>
                 <Link href='/dashboard' className='flex items-center gap-2.5 px-2 py-2 text-lg font-semibold'>
                     <span className='flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-emerald-700 text-sm font-bold text-white shadow-sm'>
-                        D
+                        O
                     </span>
-                    DocuChatty
+                    Otterly
                 </Link>
                 <p className='mt-6 px-3 text-xs font-semibold uppercase tracking-wider text-zinc-400'>Menu</p>
                 <div className='mt-2 flex-1'>
@@ -34,12 +35,13 @@ function AppShell({ user, children }: AppShellProps) {
                     </div>
                     <SignOutButton />
                 </div>
+                <PoweredBy className='mt-4 text-center' />
             </aside>
 
             <div className='min-w-0 flex-1'>
                 <header className='sticky top-0 z-30 flex h-14 items-center justify-between border-b border-zinc-200 bg-white/75 px-4 backdrop-blur-lg md:hidden'>
                     <Link href='/dashboard' className='font-semibold'>
-                        DocuChatty
+                        Otterly
                     </Link>
                     <UserMenu name={user.name} email={user.email} />
                 </header>

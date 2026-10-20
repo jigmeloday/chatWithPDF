@@ -17,7 +17,7 @@ function AuthShell({ children }: PropsWithChildren) {
                         Chat with your documents.
                     </h2>
                     <p className='mt-3 max-w-md text-green-100'>
-                        DocuChatty turns any PDF into a conversation, so you find what
+                        Otterly turns any PDF into a conversation, so you find what
                         you need without scrolling through pages.
                     </p>
                 </div>

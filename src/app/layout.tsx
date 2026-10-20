@@ -21,7 +21,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "DocuChatty: chat with your PDFs",
+  title: "Otterly: chat with your PDFs",
   description: "Upload a PDF and ask it questions. Get answers with page citations, plus an API for your own apps.",
 };
 

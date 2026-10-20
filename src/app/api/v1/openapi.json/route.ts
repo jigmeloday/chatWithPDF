@@ -5,7 +5,7 @@ const secured = [{ bearerAuth: [] }];
 
 const spec = () => ({
     openapi: '3.0.3',
-    info: { title: 'DocuChatty API', version: '1.0.0', description: 'Upload PDFs and ask questions about them. Calls count against your plan\'s token and document limits. 60 requests per minute per account.' },
+    info: { title: 'Otterly API', version: '1.0.0', description: 'Upload PDFs and ask questions about them. Calls count against your plan\'s token and document limits. 60 requests per minute per account.' },
     servers: [{ url: siteUrl() }],
     components: { securitySchemes: { bearerAuth: { type: 'http', scheme: 'bearer', description: 'API key starting with dc_live_' } } },
     paths: {

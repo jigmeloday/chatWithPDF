@@ -10,7 +10,7 @@ function NavBar() {
             <MaxWidthWrapper>
                 <div className='flex h-14 flex justify-between items-center border-b border-zinc-200'>
                     <Link href='/' className='flex z-40 font-semibold'>
-                        <span>DocuChatty</span>
+                        <span>Otterly</span>
                     </Link>
                     <MobileMenu />
                     <div className='hidden items-center space-x-4 sm:flex'>
