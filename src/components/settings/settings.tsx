@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import BillingButton from '@/components/billing-button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { SUPPORT_EMAIL } from '@/config/site';
 
 function Section({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
     return (
@@ -124,6 +125,12 @@ function Settings({ name, email }: { name: string; email: string }) {
                         {busy === 'password' && <Loader2 className='mr-2 h-4 w-4 animate-spin' />} Update password
                     </Button>
                 </form>
+            </Section>
+
+            <Section title='Help' description='Questions, billing problems or feedback?'>
+                <a href={`mailto:${SUPPORT_EMAIL}`} className='text-sm font-medium text-green-700 hover:underline'>
+                    {SUPPORT_EMAIL}
+                </a>
             </Section>
 
             <Section title='Delete account' description='Permanently removes your account, documents, chats and API keys.'>

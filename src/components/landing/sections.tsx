@@ -14,6 +14,7 @@ import {
     Zap,
 } from 'lucide-react';
 import { PLANS, PLAN_ORDER } from '@/config/plans';
+import { SUPPORT_EMAIL } from '@/config/site';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -37,6 +38,7 @@ const FAQ = [
     { q: 'Is my document private?', a: 'Yes. Only you can open your documents, and you can delete them at any time. Deleting an account removes all of its data.' },
     { q: 'What kinds of PDFs work?', a: 'Any PDF with selectable text up to 4MB. Scanned images without text are not supported yet.' },
     { q: 'Can I use it from my own app?', a: 'Yes. Create an API key in your dashboard and call the API to upload documents, check usage and ask questions.' },
+    { q: 'How do I contact support?', a: `Email us at ${SUPPORT_EMAIL} and we'll get back to you.` },
     { q: 'Can I cancel any time?', a: 'Yes. Manage or cancel your subscription from settings, and you keep Pro until the end of the period you paid for.' },
 ];
 

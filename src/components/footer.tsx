@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import MaxWidthWrapper from '@/components/max-width-wrapper';
+import { SUPPORT_EMAIL } from '@/config/site';
 import PoweredBy from '@/components/powered-by';
 
 function Footer() {
@@ -12,6 +13,7 @@ function Footer() {
                 </div>
                 <nav className='flex gap-6'>
                     <Link href='/pricing' className='hover:text-zinc-900'>Pricing</Link>
+                    <a href={`mailto:${SUPPORT_EMAIL}`} className='hover:text-zinc-900'>Contact</a>
                     <Link href='/sign-in' className='hover:text-zinc-900'>Sign in</Link>
                     <Link href='/sign-up' className='hover:text-zinc-900'>Get started</Link>
                 </nav>

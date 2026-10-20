@@ -46,6 +46,10 @@ Chat with your PDFs. Upload a document, ask questions in plain language, and get
    npm run dev
    ```
 
+## Email
+
+Password-reset and verification emails go through [Resend](https://resend.com). Sign up with `palter.bt@gmail.com`, create an API key and set `RESEND_API_KEY`. Without a verified domain, Resend only delivers to your own account email from its default `onboarding@resend.dev` sender, which is fine for testing. To email real users, verify a domain in Resend and set `EMAIL_FROM="Otterly <hello@yourdomain.com>"`. Replies go to the support address in `src/config/site.ts`.
+
 ## Scripts
 
 - `npm run dev`: start the dev server
