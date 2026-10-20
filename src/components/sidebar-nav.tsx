@@ -7,9 +7,10 @@ import { trpc } from '@/app/_trpc/client';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 
+// `also` lists extra path prefixes that keep a link highlighted: opening a file (/dashboard/<id>) counts as Documents.
 const LINKS = [
-    { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
-    { href: '/documents', label: 'Documents', icon: FileText },
+    { href: '/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
+    { href: '/documents', label: 'Documents', icon: FileText, also: ['/dashboard/'] },
     { href: '/developers', label: 'API', icon: KeyRound },
     { href: '/settings', label: 'Settings', icon: Settings },
 ];
@@ -19,11 +20,10 @@ export function SidebarLinks() {
 
     return (
         <nav className='flex flex-col gap-1'>
-            {LINKS.map(({ href, label, icon: Icon }) => {
-                // Opening a file (/dashboard/<id>) counts as being in Documents.
-                const active = href === '/dashboard'
+            {LINKS.map(({ href, label, icon: Icon, exact, also = [] }) => {
+                const active = exact
                     ? pathname === href
-                    : pathname.startsWith(href) || pathname.startsWith('/dashboard/');
+                    : pathname === href || pathname.startsWith(`${href}/`) || also.some((p) => pathname.startsWith(p));
                 return (
                     <Link
                         key={href}
