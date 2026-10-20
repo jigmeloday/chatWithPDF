@@ -1,6 +1,8 @@
 import { format } from 'date-fns';
 import { CalendarClock, Mail, Receipt, ShieldCheck } from 'lucide-react';
+import { Suspense } from 'react';
 import PlanCards from '@/components/plan-cards';
+import UpgradedToast from '@/components/billing/upgraded-toast';
 import BillingButton from '@/components/billing-button';
 import { GrowBar, Reveal } from '@/components/motion';
 import { SUPPORT_EMAIL } from '@/config/site';
@@ -36,6 +38,9 @@ function BillingView({ usage }: { usage: UsageSummary }) {
 
     return (
         <main className='mx-auto max-w-6xl px-4 py-6 md:px-8 md:py-8'>
+            <Suspense>
+                <UpgradedToast />
+            </Suspense>
             <p className='text-sm font-medium text-green-700'>Account</p>
             <h1 className='mt-1 text-3xl font-bold tracking-tight text-zinc-900 md:text-4xl'>Billing</h1>
             <p className='mt-1 text-zinc-500'>Your plan, what you&apos;ve used and your options to change it.</p>

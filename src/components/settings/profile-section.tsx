@@ -7,6 +7,7 @@ import { authClient } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { friendlyError } from '@/lib/errors';
 import { Field, SaveButton, SettingsCard } from './ui';
 
 export interface SettingsUser {
@@ -71,7 +72,7 @@ export default function ProfileSection({ user }: { user: SettingsUser }) {
             toast({ title: 'Photo updated' });
             router.refresh();
         } catch (err) {
-            toast({ title: 'Could not upload photo', description: err instanceof Error ? err.message : 'Try again', variant: 'destructive' });
+            toast({ title: 'Could not upload photo', description: friendlyError(err), variant: 'destructive' });
         } finally {
             setUploading(false);
         }
@@ -79,11 +80,17 @@ export default function ProfileSection({ user }: { user: SettingsUser }) {
 
     const removePhoto = async () => {
         setUploading(true);
-        await fetch('/api/avatar', { method: 'DELETE' });
-        setImage(null);
-        setUploading(false);
-        toast({ title: 'Photo removed' });
-        router.refresh();
+        try {
+            const res = await fetch('/api/avatar', { method: 'DELETE' });
+            if (!res.ok) throw new Error('Could not remove your photo');
+            setImage(null);
+            toast({ title: 'Photo removed' });
+            router.refresh();
+        } catch (err) {
+            toast({ title: 'Could not remove photo', description: friendlyError(err), variant: 'destructive' });
+        } finally {
+            setUploading(false);
+        }
     };
 
     const saveName = async (e: FormEvent) => {
@@ -91,14 +98,14 @@ export default function ProfileSection({ user }: { user: SettingsUser }) {
         setSaving(true);
         const { error } = await authClient.updateUser({ name: name.trim() });
         setSaving(false);
-        if (error) return toast({ title: 'Could not save', description: error.message, variant: 'destructive' });
+        if (error) return toast({ title: 'Could not save', description: friendlyError(error.message), variant: 'destructive' });
         toast({ title: 'Profile updated' });
         router.refresh();
     };
 
     const resendVerification = async () => {
         const { error } = await authClient.sendVerificationEmail({ email: user.email, callbackURL: '/settings' });
-        toast(error ? { title: 'Could not send email', description: error.message, variant: 'destructive' } : { title: 'Verification email sent', description: 'Check your inbox.' });
+        toast(error ? { title: 'Could not send email', description: friendlyError(error.message), variant: 'destructive' } : { title: 'Verification email sent', description: 'Check your inbox.' });
     };
 
     return (

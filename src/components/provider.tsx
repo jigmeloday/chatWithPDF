@@ -12,11 +12,25 @@ import { toast } from '@/hooks/use-toast'
 import { friendlyError } from '@/lib/errors'
 import { PropsWithChildren, useState } from 'react'
 
+const recentErrors = new Map<string, number>()
+
 const Providers = ({ children }: PropsWithChildren) => {
     const [queryClient] = useState(
         () =>
             new QueryClient({
                 defaultOptions: {
+                    // A failed data load (after retries) tells the user once, not on every poll.
+                    queries: {
+                        onError: (err) => {
+                            const code = (err as { data?: { code?: string } })?.data?.code;
+                            if (code === 'UNAUTHORIZED') return; // the auth flow already redirects
+                            const description = friendlyError(err);
+                            const now = Date.now();
+                            if (now - (recentErrors.get(description) ?? 0) < 8000) return;
+                            recentErrors.set(description, now);
+                            toast({ title: 'Could not load data', description, variant: 'destructive' });
+                        },
+                    },
                     // One place to tell the user when an action fails, instead of each screen handling it.
                     mutations: {
                         onError: (err) => toast({ title: 'Something went wrong', description: friendlyError(err), variant: 'destructive' }),

@@ -1,10 +1,11 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Download, Eraser, FileX } from 'lucide-react';
+import { Download, Eraser, FileX, Loader2 } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { friendlyError } from '@/lib/errors';
 import { ConfirmDialog, SettingsCard } from './ui';
 
 export default function DataSection() {
@@ -12,6 +13,26 @@ export default function DataSection() {
     const router = useRouter();
     const utils = trpc.useContext();
     const [dialog, setDialog] = useState<'chats' | 'docs' | null>(null);
+    const [exporting, setExporting] = useState(false);
+
+    const downloadExport = async () => {
+        setExporting(true);
+        try {
+            const res = await fetch('/api/account/export');
+            if (!res.ok) throw new Error(res.status === 429 ? 'You can export up to 3 times an hour. Try again later.' : 'Could not prepare your export.');
+            const url = URL.createObjectURL(await res.blob());
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'otterly-data-export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            toast({ title: 'Export downloaded', description: 'Your data was saved as a JSON file.' });
+        } catch (err) {
+            toast({ title: 'Export failed', description: friendlyError(err), variant: 'destructive' });
+        } finally {
+            setExporting(false);
+        }
+    };
 
     const refresh = () => {
         utils.invalidate();
@@ -52,13 +73,9 @@ export default function DataSection() {
             <SettingsCard title='Your data' description='Take your data with you, or clear parts of it without deleting your account.'>
                 <ul className='divide-y divide-zinc-100'>
                     <Row icon={Download} title='Export my data' text='Download a JSON file with your profile, documents, chats, saved answers, API keys (names only) and webhooks.'>
-                        <a
-                            href='/api/account/export'
-                            download
-                            onClick={() => toast({ title: 'Preparing your export…' })}
-                            className='inline-flex h-8 items-center rounded-md border border-input bg-white px-3 text-xs font-medium shadow-sm hover:bg-zinc-50'>
-                            Download JSON
-                        </a>
+                        <Button size='sm' variant='outline' disabled={exporting} onClick={downloadExport}>
+                            {exporting ? <Loader2 className='mr-2 h-4 w-4 animate-spin' /> : null} Download JSON
+                        </Button>
                     </Row>
                     <Row icon={Eraser} title='Clear chat history' text='Deletes every conversation and question, in single-document chats and Ask AI. Your documents stay.'>
                         <Button size='sm' variant='outline' onClick={() => setDialog('chats')}>Clear history</Button>

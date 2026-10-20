@@ -1,10 +1,10 @@
 'use client';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
-import { authClient } from '@/lib/auth-client';
+import { useSignOut } from '@/hooks/use-sign-out';
 import { cn } from '@/lib/utils';
 import { NAV_GROUPS, isNavActive } from '@/config/nav';
 
@@ -48,13 +48,7 @@ export function SidebarLinks() {
 }
 
 export function SignOutButton() {
-    const router = useRouter();
-
-    const signOut = async () => {
-        await authClient.signOut();
-        router.push('/');
-        router.refresh();
-    };
+    const signOut = useSignOut();
 
     return (
         <button

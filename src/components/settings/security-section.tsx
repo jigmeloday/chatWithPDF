@@ -6,6 +6,7 @@ import { authClient } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { friendlyError } from '@/lib/errors';
 import { Field, SaveButton, SettingsCard } from './ui';
 
 interface SessionRow {
@@ -33,8 +34,10 @@ export default function SecuritySection() {
 
     const load = useCallback(async () => {
         const [list, current] = await Promise.all([authClient.listSessions(), authClient.getSession()]);
+        if (list.error) toast({ title: 'Could not load your sessions', description: friendlyError(list.error.message), variant: 'destructive' });
         setSessions((list.data as SessionRow[] | null) ?? []);
         setCurrentToken(current.data?.session.token ?? null);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -52,7 +55,7 @@ export default function SecuritySection() {
             revokeOtherSessions: true,
         });
         setChanging(false);
-        if (error) return toast({ title: 'Could not change password', description: error.message, variant: 'destructive' });
+        if (error) return toast({ title: 'Could not change password', description: friendlyError(error.message), variant: 'destructive' });
         form.reset();
         toast({ title: 'Password changed', description: 'Other devices were signed out.' });
         load();
@@ -62,7 +65,7 @@ export default function SecuritySection() {
         setBusy(token);
         const { error } = await authClient.revokeSession({ token });
         setBusy(null);
-        if (error) return toast({ title: 'Could not sign out that device', description: error.message, variant: 'destructive' });
+        if (error) return toast({ title: 'Could not sign out that device', description: friendlyError(error.message), variant: 'destructive' });
         toast({ title: 'Device signed out' });
         load();
     };
@@ -71,7 +74,7 @@ export default function SecuritySection() {
         setBusy('others');
         const { error } = await authClient.revokeOtherSessions();
         setBusy(null);
-        if (error) return toast({ title: 'Could not sign out other devices', description: error.message, variant: 'destructive' });
+        if (error) return toast({ title: 'Could not sign out other devices', description: friendlyError(error.message), variant: 'destructive' });
         toast({ title: 'Signed out of all other devices' });
         load();
     };

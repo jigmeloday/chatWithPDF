@@ -1,10 +1,9 @@
 'use client';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { NAV_GROUPS } from '@/config/nav';
 import { Avatar } from '@/components/settings/profile-section';
-import { authClient } from '@/lib/auth-client';
+import { useSignOut } from '@/hooks/use-sign-out';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -21,13 +20,7 @@ interface UserMenuProps {
 }
 
 function UserMenu({ name, email, image }: UserMenuProps) {
-    const router = useRouter();
-
-    const signOut = async () => {
-        await authClient.signOut();
-        router.push('/');
-        router.refresh();
-    };
+    const signOut = useSignOut();
 
     return (
         <DropdownMenu>

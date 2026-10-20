@@ -6,8 +6,6 @@ import { trpc } from '@/app/_trpc/client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Reveal, Stagger, StaggerItem } from '@/components/motion';
-import { useToast } from '@/hooks/use-toast';
-import { friendlyError } from '@/lib/errors';
 
 // Wraps words from the query in <mark> so the match is easy to spot.
 function Highlight({ text, query }: { text: string; query: string }) {
@@ -32,13 +30,11 @@ const EXAMPLES = ['payment deadline', 'who are the parties', 'termination clause
 function Search() {
     const [input, setInput] = useState('');
     const [query, setQuery] = useState('');
-    const { toast } = useToast();
     const { data, isFetching } = trpc.searchDocuments.useQuery(
         { query },
         {
             enabled: query.length >= 2,
             retry: false,
-            onError: (err) => toast({ title: 'Search failed', description: friendlyError(err), variant: 'destructive' }),
         }
     );
 

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { authClient } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { friendlyError } from '@/lib/errors';
 import { ConfirmDialog, SettingsCard } from './ui';
 
 export default function DangerSection({ email }: { email: string }) {
@@ -14,7 +15,7 @@ export default function DangerSection({ email }: { email: string }) {
         setBusy(true);
         const { error } = await authClient.deleteUser();
         setBusy(false);
-        if (error) return toast({ title: 'Could not delete account', description: error.message, variant: 'destructive' });
+        if (error) return toast({ title: 'Could not delete account', description: friendlyError(error.message), variant: 'destructive' });
         window.location.href = '/';
     };
 
