@@ -26,7 +26,7 @@ export interface ChatProviderProps {
 }
 
 export type StreamResponse = {
-    addMessage: ()=> void,
+    addMessage: (text?: string)=> void,
     handleInputChange: (event: ChangeEvent<HTMLTextAreaElement>) => void,
     message: string,
     isLoading: boolean,

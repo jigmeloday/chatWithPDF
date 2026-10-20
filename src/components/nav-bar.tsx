@@ -2,6 +2,7 @@ import MaxWidthWrapper from '@/components/max-width-wrapper';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import MobileMenu from '@/components/mobile-menu';
 
 function NavBar() {
     return(
@@ -11,7 +12,7 @@ function NavBar() {
                     <Link href='/' className='flex z-40 font-semibold'>
                         <span>DocuChatty</span>
                     </Link>
-                    {/*TODO MOBILE*/}
+                    <MobileMenu />
                     <div className='hidden items-center space-x-4 sm:flex'>
                         <>
                             <Link className={buttonVariants({

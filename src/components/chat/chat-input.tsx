@@ -31,7 +31,7 @@ function ChatInput({ isDisabled }: { isDisabled?: boolean }){
                                         e.preventDefault()
                                         if ( isLoading || isDisabled ) return
 
-                                        addMessage()
+                                        addMessage(undefined)
 
                                         textareaRef.current?.focus()
                                     }
@@ -45,7 +45,7 @@ function ChatInput({ isDisabled }: { isDisabled?: boolean }){
                                 className='absolute bottom-1.5 right-[8px]'
                                 aria-label='send message'
                                 onClick={() => {
-                                    addMessage()
+                                    addMessage(undefined)
 
                                     textareaRef.current?.focus()
                                 }}>

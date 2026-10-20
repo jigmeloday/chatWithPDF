@@ -2,9 +2,16 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { format, formatDistanceToNow } from 'date-fns';
-import { ArrowUpRight, FileText, Loader2, Trash } from 'lucide-react';
+import { ArrowUpRight, FileText, Loader2, MoreHorizontal, Pencil, RotateCw, Trash } from 'lucide-react';
 import { trpc } from '@/app/_trpc/client';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
     Dialog,
     DialogContent,
@@ -35,6 +42,8 @@ interface FileCardProps {
 
 function FileCard({ file, view = 'grid' }: FileCardProps) {
     const [confirming, setConfirming] = useState(false);
+    const [renaming, setRenaming] = useState(false);
+    const [newName, setNewName] = useState(file.name);
     const utils = trpc.useContext();
     const { mutate: deleteFile, isLoading: isDeleting } = trpc.deleteFile.useMutation({
         onSuccess: () => {
@@ -43,6 +52,15 @@ function FileCard({ file, view = 'grid' }: FileCardProps) {
             utils.getActivity.invalidate();
             setConfirming(false);
         },
+    });
+    const { mutate: renameFile, isLoading: isRenaming } = trpc.renameFile.useMutation({
+        onSuccess: () => {
+            utils.getUserFiles.invalidate();
+            setRenaming(false);
+        },
+    });
+    const { mutate: retryFile } = trpc.retryFile.useMutation({
+        onSuccess: () => utils.getUserFiles.invalidate(),
     });
     const status = STATUS_STYLES[file.uploadStatus] ?? STATUS_STYLES.PENDING;
     const created = new Date(file.createdAt);
@@ -63,14 +81,30 @@ function FileCard({ file, view = 'grid' }: FileCardProps) {
         </span>
     );
     const deleteButton = (
-        <Button
-            aria-label={`Delete ${file.name}`}
-            onClick={() => setConfirming(true)}
-            size='icon'
-            variant='ghost'
-            className='h-8 w-8 text-zinc-400 hover:bg-red-50 hover:text-red-600'>
-            <Trash className='h-4 w-4' />
-        </Button>
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button
+                    aria-label={`Actions for ${file.name}`}
+                    size='icon'
+                    variant='ghost'
+                    className='h-8 w-8 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700'>
+                    <MoreHorizontal className='h-4 w-4' />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+                <DropdownMenuItem onSelect={() => { setNewName(file.name); setRenaming(true); }} className='cursor-pointer'>
+                    <Pencil className='mr-2 h-4 w-4' /> Rename
+                </DropdownMenuItem>
+                {file.uploadStatus === 'FAILED' && (
+                    <DropdownMenuItem onSelect={() => retryFile({ id: file.id })} className='cursor-pointer'>
+                        <RotateCw className='mr-2 h-4 w-4' /> Retry processing
+                    </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onSelect={() => setConfirming(true)} className='cursor-pointer text-red-600 focus:text-red-600'>
+                    <Trash className='mr-2 h-4 w-4' /> Delete
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 
     return (
@@ -113,6 +147,26 @@ function FileCard({ file, view = 'grid' }: FileCardProps) {
                     {deleteButton}
                 </div>
             )}
+
+            <Dialog open={renaming} onOpenChange={setRenaming}>
+                <DialogContent>
+                    <DialogTitle>Rename document</DialogTitle>
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            renameFile({ id: file.id, name: newName });
+                        }}
+                        className='flex flex-col gap-4'>
+                        <Input value={newName} onChange={(e) => setNewName(e.target.value)} maxLength={120} required autoFocus />
+                        <DialogFooter className='gap-2'>
+                            <Button type='button' variant='outline' onClick={() => setRenaming(false)}>Cancel</Button>
+                            <Button type='submit' disabled={isRenaming}>
+                                {isRenaming && <Loader2 className='mr-2 h-4 w-4 animate-spin' />} Save
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
 
             <Dialog open={confirming} onOpenChange={setConfirming}>
                 <DialogContent>

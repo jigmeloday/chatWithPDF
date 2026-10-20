@@ -25,11 +25,11 @@ export const ChatContextProvider = ({ fileId, children }: ChatProviderProps) => 
         setMessage(e.target.value)
     }
 
-    const addMessage = async () => {
-        const question = message.trim()
+    const addMessage = async (text?: string) => {
+        const question = (text ?? message).trim()
         if ( !question || isLoading ) return
 
-        setMessage('')
+        if ( text === undefined ) setMessage('')
         setPendingQuestion(question)
         setPendingAnswer('')
         setIsLoading(true)
@@ -54,7 +54,7 @@ export const ChatContextProvider = ({ fileId, children }: ChatProviderProps) => 
                 setPendingAnswer((prev) => prev + decoder.decode(value, { stream: true }))
             }
         } catch ( err ) {
-            setMessage(question)
+            if ( text === undefined ) setMessage(question)
             toast({
                 title: 'Could not send message',
                 description: err instanceof Error ? err.message : 'Please try again.',

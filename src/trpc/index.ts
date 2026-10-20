@@ -8,6 +8,7 @@ import { TRPCError } from '@trpc/server'
 import { db } from '@/db'
 import { z } from 'zod'
 import { generateApiKey } from '@/lib/api-keys'
+import { processDocument } from '@/lib/process-document'
 import { storage } from '@/lib/storage'
 import { getActivity, getApiSummary, getDailyTokens, getUsageSummary } from '@/lib/usage'
 
@@ -59,6 +60,33 @@ export const appRouter = router({
                 select: { id: true, text: true, isUserMessage: true, createdAt: true },
             })
             return messages
+        }),
+    clearMessages: privateProcedure
+        .input(z.object({ fileId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            await db.message.deleteMany({ where: { fileId: input.fileId, userId: ctx.userId } })
+            return { success: true }
+        }),
+    renameFile: privateProcedure
+        .input(z.object({ id: z.string(), name: z.string().trim().min(1).max(120) }))
+        .mutation(async ({ ctx, input }) => {
+            const { count } = await db.file.updateMany({
+                where: { id: input.id, userId: ctx.userId },
+                data: { name: input.name },
+            })
+            if ( !count ) throw new TRPCError({ code: 'NOT_FOUND' })
+            return { success: true }
+        }),
+    retryFile: privateProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const file = await db.file.findFirst({ where: { id: input.id, userId: ctx.userId, uploadStatus: 'FAILED' } })
+            if ( !file ) throw new TRPCError({ code: 'NOT_FOUND' })
+
+            await db.documentChunk.deleteMany({ where: { fileId: file.id } })
+            await db.file.update({ where: { id: file.id }, data: { uploadStatus: 'PROCESSING' } })
+            void processDocument(file.id, file.key)
+            return { success: true }
         }),
     getUserFiles: privateProcedure.query(async ({ ctx }) => {
         const { userId } = ctx

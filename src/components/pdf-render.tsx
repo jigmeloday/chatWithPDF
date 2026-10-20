@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     ChevronDown,
     ChevronUp,
@@ -69,6 +69,18 @@ function PdfRenderer({ url }: PdfRendererProps) {
     })
 
     const { width, ref } = useResizeDetector()
+
+    // Chat citations like "(p. 3)" ask the viewer to jump to a page.
+    useEffect(() => {
+        const onGoto = (e: Event) => {
+            const page = (e as CustomEvent<number>).detail
+            if ( !numPages || page < 1 || page > numPages ) return
+            setCurrPage(page)
+            setValue('page', String(page))
+        }
+        window.addEventListener('pdf:goto', onGoto)
+        return () => window.removeEventListener('pdf:goto', onGoto)
+    }, [numPages, setValue])
 
     const handlePageSubmit = ({ page, }: TCustomPageValidator) => {
         setCurrPage(Number(page))

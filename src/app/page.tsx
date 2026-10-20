@@ -2,8 +2,17 @@ import MaxWidthWrapper from '@/components/max-width-wrapper';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getSessionUser } from '@/lib/auth';
-import { ArrowRight, Highlighter, MessageCircleQuestion, Search } from 'lucide-react';
+import { ArrowRight, Check, Code2, MessageCircleQuestion, Search } from 'lucide-react';
+import { PLANS } from '@/config/plans';
 import { buttonVariants } from '@/components/ui/button';
+
+const FAQ = [
+    { q: 'What are tokens?', a: 'Tokens measure how much text the AI reads and writes when answering. Your plan includes a monthly allowance, and you can see how much you have left on your dashboard.' },
+    { q: 'Is my document private?', a: 'Yes. Only you can open your documents, and you can delete them at any time. Deleting an account removes all of its data.' },
+    { q: 'What kinds of PDFs work?', a: 'Any PDF with selectable text up to 4MB. Scanned images without text are not supported yet.' },
+    { q: 'Can I use it from my own app?', a: 'Yes. Create an API key in your dashboard and call the API to list documents, check usage and ask questions.' },
+    { q: 'Can I cancel any time?', a: 'Yes. Manage or cancel your subscription from settings, and you keep Pro until the end of the period you paid for.' },
+]
 
 export default async function Home() {
     if ( await getSessionUser() ) redirect('/dashboard');
@@ -33,8 +42,7 @@ export default async function Home() {
                         size: 'lg',
                         className: 'mt-5',
                     } ) }
-                    href='/dashboard'
-                    target='_blank'>
+                    href='/sign-up'>
                     Get started{ ' ' }
                     <ArrowRight className='ml-2 h-5 w-5'/>
                 </Link>
@@ -69,8 +77,8 @@ export default async function Home() {
                         </div>
                         <div
                             className='flex flex-col justify-between bg-gray-900/5 p-8 rounded-md w-full lg:w-1/3 h-[200px]'>
-                            <p className='text-zinc-600'>Interactive Annotations and Comments</p>
-                            <Highlighter className='text-green-600'/>
+                            <p className='text-zinc-600'>Developer API to build on your documents</p>
+                            <Code2 className='text-green-600'/>
                         </div>
                     </div>
 
@@ -155,6 +163,51 @@ export default async function Home() {
                     </li>
                 </ol>
             </div>
+
+            {/* Pricing */ }
+            <section className='mx-auto mb-32 max-w-4xl px-6'>
+                <h2 className='text-center text-4xl font-bold text-gray-900'>Pricing</h2>
+                <p className='mx-auto mt-3 max-w-xl text-center text-gray-600'>Start free. Upgrade when you need more.</p>
+                <div className='mt-10 grid gap-6 md:grid-cols-2'>
+                    { Object.values(PLANS).map((plan) => (
+                        <div key={ plan.slug } className='rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-950/10'>
+                            <h3 className='text-lg font-semibold'>{ plan.name }</h3>
+                            <p className='mt-2'>
+                                <span className='text-4xl font-bold'>${ plan.price }</span>
+                                <span className='text-zinc-500'> / month</span>
+                            </p>
+                            <ul className='mt-4 space-y-2 text-sm text-zinc-700'>
+                                { plan.features.map((f) => (
+                                    <li key={ f } className='flex items-center gap-2'>
+                                        <Check className='h-4 w-4 text-green-600'/> { f }
+                                    </li>
+                                )) }
+                            </ul>
+                        </div>
+                    )) }
+                </div>
+                <div className='mt-8 text-center'>
+                    <Link href='/pricing' className={ buttonVariants({ variant: 'outline' }) }>
+                        Compare plans
+                    </Link>
+                </div>
+            </section>
+
+            {/* FAQ */ }
+            <section className='mx-auto mb-32 max-w-3xl px-6'>
+                <h2 className='text-center text-4xl font-bold text-gray-900'>Questions</h2>
+                <div className='mt-10 divide-y divide-zinc-200 rounded-2xl bg-white shadow-sm ring-1 ring-zinc-950/10'>
+                    { FAQ.map(({ q, a }) => (
+                        <details key={ q } className='group p-5'>
+                            <summary className='flex cursor-pointer list-none items-center justify-between font-medium'>
+                                { q }
+                                <span className='ml-4 text-zinc-400 transition group-open:rotate-45'>+</span>
+                            </summary>
+                            <p className='mt-3 text-sm text-zinc-600'>{ a }</p>
+                        </details>
+                    )) }
+                </div>
+            </section>
         </div>
     );
 }
