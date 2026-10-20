@@ -107,7 +107,7 @@ function LandingSections() {
             </section>
 
             {/* How it works */}
-            <section className='mx-auto mt-28 max-w-5xl px-6'>
+            <section id='how-it-works' className='mx-auto mt-28 max-w-5xl scroll-mt-28 px-6'>
                 <SectionHeading eyebrow='How it works' title='Start chatting in minutes' text='Three steps from a PDF to answers you can trust.' />
                 <ol className='mt-12 grid gap-6 md:grid-cols-3'>
                     {STEPS.map(({ icon: Icon, title, text }, i) => (
@@ -124,7 +124,7 @@ function LandingSections() {
             </section>
 
             {/* Features */}
-            <section className='mx-auto mt-28 max-w-6xl px-6'>
+            <section id='features' className='mx-auto mt-28 max-w-6xl scroll-mt-28 px-6'>
                 <SectionHeading eyebrow='Features' title='Everything you need to understand your documents' />
                 <div className='mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3'>
                     {FEATURES.map(({ icon: Icon, title, text }) => (
@@ -173,7 +173,7 @@ function LandingSections() {
             </section>
 
             {/* Pricing */}
-            <section className='mx-auto mt-28 max-w-6xl px-6'>
+            <section id='pricing' className='mx-auto mt-28 max-w-6xl scroll-mt-28 px-6'>
                 <SectionHeading eyebrow='Pricing' title='Simple plans, no surprises' text='Start free. Upgrade when you need more.' />
                 <div className='mt-10 grid gap-6 lg:grid-cols-3'>
                     {PLAN_ORDER.map((slug) => {
@@ -208,7 +208,7 @@ function LandingSections() {
             </section>
 
             {/* FAQ */}
-            <section className='mx-auto mt-28 max-w-3xl px-6'>
+            <section id='faq' className='mx-auto mt-28 max-w-3xl scroll-mt-28 px-6'>
                 <SectionHeading eyebrow='FAQ' title='Questions, answered' />
                 <div className='mt-10 divide-y divide-zinc-200 rounded-2xl bg-white shadow-sm ring-1 ring-zinc-950/10'>
                     {FAQ.map(({ q, a }) => (

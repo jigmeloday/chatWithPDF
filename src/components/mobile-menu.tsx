@@ -9,7 +9,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const LINKS = [
+    { href: '/#features', label: 'Features' },
+    { href: '/#how-it-works', label: 'How it works' },
     { href: '/pricing', label: 'Pricing' },
+    { href: '/#faq', label: 'FAQ' },
     { href: '/sign-in', label: 'Sign in' },
     { href: '/sign-up', label: 'Get started' },
 ];
@@ -17,7 +20,7 @@ const LINKS = [
 function MobileMenu() {
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger aria-label='Open menu' className='rounded-md p-2 text-zinc-700 hover:bg-zinc-100 sm:hidden'>
+            <DropdownMenuTrigger aria-label='Open menu' className='rounded-full p-2 text-zinc-700 hover:bg-zinc-100 md:hidden'>
                 <Menu className='h-5 w-5' />
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' className='w-44'>
