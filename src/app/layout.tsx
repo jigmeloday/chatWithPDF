@@ -6,6 +6,7 @@ import NavBar from '@/components/nav-bar';
 import Provider from '@/components/provider';
 import { Toaster } from '@/components/ui/toaster';
 import Footer from '@/components/footer';
+import SiteChrome from '@/components/site-chrome';
 import AppShell from '@/components/app-shell';
 import { getSessionUser } from '@/lib/auth';
 
@@ -42,11 +43,9 @@ export default async function RootLayout({
         {user ? (
           <AppShell user={user}>{children}</AppShell>
         ) : (
-          <div className='flex min-h-screen flex-col'>
-            <NavBar />
-            <div className='flex flex-1 flex-col'>{children}</div>
-            <Footer />
-          </div>
+          <SiteChrome nav={<NavBar />} footer={<Footer />}>
+            {children}
+          </SiteChrome>
         )}
         </body>
       </Provider>

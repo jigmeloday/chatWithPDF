@@ -1,4 +1,6 @@
 import { PropsWithChildren } from 'react';
+import Link from 'next/link';
+import { SITE_NAME } from '@/config/site';
 import { Stagger, StaggerItem } from '@/components/motion';
 import { FileText, MessageCircle, Sparkles } from 'lucide-react';
 
@@ -11,8 +13,12 @@ const HIGHLIGHTS = [
 // Split layout shared by all auth pages: brand panel on the left, content on the right.
 function AuthShell({ children }: PropsWithChildren) {
     return (
-        <div className='grid flex-1 lg:grid-cols-2'>
-            <aside className='hidden flex-col justify-center gap-8 bg-gradient-to-br from-green-600 to-green-900 px-16 text-white lg:flex'>
+        <div className='grid min-h-screen flex-1 lg:grid-cols-2'>
+            <aside className='relative hidden flex-col justify-center gap-8 bg-gradient-to-br from-green-600 to-green-900 px-16 text-white lg:flex'>
+                <Link href='/' className='absolute left-16 top-10 flex items-center gap-2.5 text-lg font-semibold'>
+                    <span className='flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-sm font-bold'>O</span>
+                    {SITE_NAME}
+                </Link>
                 <div>
                     <h2 className='text-4xl font-bold leading-tight'>
                         Chat with your documents.
@@ -34,7 +40,13 @@ function AuthShell({ children }: PropsWithChildren) {
                 </Stagger>
             </aside>
 
-            <main className='flex items-center justify-center px-4 py-12'>{children}</main>
+            <main className='relative flex flex-col items-center justify-center px-4 py-12'>
+                <Link href='/' className='mb-8 flex items-center gap-2.5 text-lg font-semibold lg:hidden'>
+                    <span className='flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-emerald-700 text-sm font-bold text-white'>O</span>
+                    {SITE_NAME}
+                </Link>
+                {children}
+            </main>
         </div>
     );
 }
