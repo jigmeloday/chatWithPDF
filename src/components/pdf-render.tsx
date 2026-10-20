@@ -32,10 +32,10 @@ import { PdfRendererProps } from '@/components/model/components.model';
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 
-function PdfRenderer({ url }: PdfRendererProps) {
+function PdfRenderer({ url, initialPage = 1 }: PdfRendererProps) {
     const { toast } = useToast()
     const [numPages, setNumPages] = useState<number>()
-    const [currPage, setCurrPage] = useState<number>(1)
+    const [currPage, setCurrPage] = useState<number>(initialPage)
     const [scale, setScale] = useState<number>(1)
     const [rotation, setRotation] = useState<number>(0)
     const [renderedScale, setRenderedScale] = useState<
@@ -63,7 +63,7 @@ function PdfRenderer({ url }: PdfRendererProps) {
         setValue,
     } = useForm<TCustomPageValidator>({
         defaultValues: {
-            page: '1',
+            page: String(initialPage),
         },
         resolver: zodResolver(CustomPageValidator),
     })

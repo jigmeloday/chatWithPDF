@@ -6,6 +6,7 @@ import Dropzone from 'react-dropzone';
 import { Cloud, File as FileIcon, Loader2 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
+import { friendlyError } from '@/lib/errors';
 import { trpc } from '@/app/_trpc/client';
 import { useRouter } from 'next/navigation';
 
@@ -53,9 +54,10 @@ const UploadDropzone = () => {
                     utils.getUserFiles.invalidate()
                     utils.getUsage.invalidate()
                     utils.getActivity.invalidate()
+                    toast({ title: 'Upload complete', description: 'We’re processing your PDF. This usually takes a few seconds.' })
                     router.push(`/dashboard/${id}`)
                 } catch ( err ) {
-                    fail(err instanceof Error ? err.message : 'Please try again later')
+                    fail(friendlyError(err, 'Please try again later'))
                     setIsUploading(false)
                 }
             }}>

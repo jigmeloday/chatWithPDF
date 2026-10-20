@@ -28,7 +28,6 @@ yarn-error.log*
 
 # local env files
 .env*.local
-.env
 # vercel
 .vercel
 
@@ -38,3 +37,5 @@ next-env.d.ts
 
 # local document storage
 /uploads
+/.next-test
+config.bat

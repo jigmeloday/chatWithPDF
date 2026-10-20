@@ -1,143 +1,97 @@
 'use client';
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { format } from 'date-fns';
-import { Loader2 } from 'lucide-react';
-import { authClient } from '@/lib/auth-client';
-import { trpc } from '@/app/_trpc/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import BillingButton from '@/components/billing-button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Bell, Database, ShieldCheck, SlidersHorizontal, TriangleAlert, User } from 'lucide-react';
+import { EASE } from '@/components/motion';
+import { cn } from '@/lib/utils';
+import ProfileSection, { Avatar, SettingsUser } from './profile-section';
+import PreferencesSection from './preferences-section';
+import NotificationsSection from './notifications-section';
+import SecuritySection from './security-section';
+import DataSection from './data-section';
+import DangerSection from './danger-section';
 
-function Section({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
-    return (
-        <section className='rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-950/5'>
-            <h2 className='text-lg font-semibold text-zinc-900'>{title}</h2>
-            <p className='mt-1 text-sm text-zinc-500'>{description}</p>
-            <div className='mt-5'>{children}</div>
-        </section>
-    );
-}
+const SECTIONS = [
+    { id: 'profile', label: 'Profile', hint: 'Photo and personal info', icon: User },
+    { id: 'preferences', label: 'AI preferences', hint: 'Answer style and language', icon: SlidersHorizontal },
+    { id: 'notifications', label: 'Notifications', hint: 'Email alerts', icon: Bell },
+    { id: 'security', label: 'Security', hint: 'Password and sessions', icon: ShieldCheck },
+    { id: 'data', label: 'Data and privacy', hint: 'Export and clear data', icon: Database },
+    { id: 'danger', label: 'Danger zone', hint: 'Delete your account', icon: TriangleAlert },
+] as const;
+type SectionId = (typeof SECTIONS)[number]['id'];
 
-function Settings({ name, email }: { name: string; email: string }) {
-    const router = useRouter();
-    const { toast } = useToast();
-    const { data: usage } = trpc.getUsage.useQuery();
-    const [busy, setBusy] = useState<string | null>(null);
-    const [confirmDelete, setConfirmDelete] = useState(false);
-
-    const run = async (key: string, fn: () => Promise<{ error: { message?: string } | null }>, success: string) => {
-        setBusy(key);
-        const { error } = await fn();
-        setBusy(null);
-        if (error) return toast({ title: 'Something went wrong', description: error.message, variant: 'destructive' });
-        toast({ title: success });
-        router.refresh();
-        return true;
-    };
-
-    const saveProfile = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const newName = String(new FormData(e.currentTarget).get('name')).trim();
-        return run('profile', () => authClient.updateUser({ name: newName }), 'Profile updated');
-    };
-
-    const changePassword = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const form = e.currentTarget;
-        const data = new FormData(form);
-        const ok = await run(
-            'password',
-            () =>
-                authClient.changePassword({
-                    currentPassword: String(data.get('current')),
-                    newPassword: String(data.get('next')),
-                    revokeOtherSessions: true,
-                }),
-            'Password changed'
-        );
-        if (ok) form.reset();
-    };
-
-    const deleteAccount = async () => {
-        setBusy('delete');
-        const { error } = await authClient.deleteUser();
-        setBusy(null);
-        if (error) return toast({ title: 'Could not delete account', description: error.message, variant: 'destructive' });
-        window.location.href = '/';
-    };
+function Settings({ user }: { user: SettingsUser }) {
+    const [active, setActive] = useState<SectionId>('profile');
+    const current = SECTIONS.find((s) => s.id === active)!;
 
     return (
-        <main className='mx-auto max-w-3xl space-y-6 px-4 py-6 md:px-8 md:py-8'>
-            <div>
-                <p className='text-sm font-medium text-green-700'>Account</p>
-                <h1 className='mt-1 text-3xl font-bold tracking-tight text-zinc-900 md:text-4xl'>Settings</h1>
+        <main className='mx-auto max-w-6xl px-4 py-6 md:px-8 md:py-8'>
+            <div className='flex items-center gap-4'>
+                <Avatar user={user} size='h-14 w-14 text-xl' />
+                <div className='min-w-0'>
+                    <h1 className='text-3xl font-bold tracking-tight text-zinc-900'>Settings</h1>
+                    <p className='truncate text-sm text-zinc-500'>{user.name || 'Your account'} · {user.email}</p>
+                </div>
             </div>
 
-            <Section title='Profile' description='Your name appears in the sidebar and greeting.'>
-                <form onSubmit={saveProfile} className='flex max-w-md flex-col gap-3'>
-                    <label className='text-sm font-medium text-zinc-700'>Email
-                        <Input value={email} disabled className='mt-1.5 h-10' />
-                    </label>
-                    <label className='text-sm font-medium text-zinc-700'>Name
-                        <Input name='name' defaultValue={name} required className='mt-1.5 h-10' />
-                    </label>
-                    <Button type='submit' disabled={busy === 'profile'} className='w-fit'>
-                        {busy === 'profile' && <Loader2 className='mr-2 h-4 w-4 animate-spin' />} Save changes
-                    </Button>
-                </form>
-            </Section>
-
-            <Section title='Plan' description='Your current subscription and what it includes.'>
-                {usage ? (
-                    <dl className='grid grid-cols-2 gap-4 text-sm sm:grid-cols-4'>
-                        <div><dt className='text-zinc-500'>Plan</dt><dd className='mt-1 font-semibold'>{usage.plan.name}</dd></div>
-                        <div><dt className='text-zinc-500'>Renews</dt><dd className='mt-1 font-semibold'>{format(new Date(usage.periodEnd), 'MMM d, yyyy')}</dd></div>
-                        <div><dt className='text-zinc-500'>Tokens</dt><dd className='mt-1 font-semibold'>{usage.tokensUsed.toLocaleString()} / {usage.tokenLimit.toLocaleString()}</dd></div>
-                        <div><dt className='text-zinc-500'>Documents</dt><dd className='mt-1 font-semibold'>{usage.documentsUsed} / {usage.documentLimit}</dd></div>
-                    </dl>
-                ) : (
-                    <p className='text-sm text-zinc-500'>Loading…</p>
-                )}
-                {usage && (
-                    <div className='mt-5'>
-                        {usage.plan.slug === 'free' ? (
-                            <BillingButton action='checkout'>Upgrade to Pro</BillingButton>
-                        ) : (
-                            <BillingButton action='portal' variant='outline'>Manage billing</BillingButton>
-                        )}
+            <div className='mt-8 grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]'>
+                {/* Navigation: a sticky column on desktop, a scrolling strip on small screens */}
+                <nav aria-label='Settings sections' className='lg:sticky lg:top-8 lg:self-start'>
+                    <div role='tablist' aria-orientation='vertical' className='-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0'>
+                        {SECTIONS.map(({ id, label, hint, icon: Icon }) => {
+                            const on = active === id;
+                            const danger = id === 'danger';
+                            return (
+                                <button
+                                    key={id}
+                                    role='tab'
+                                    aria-selected={on}
+                                    onClick={() => setActive(id)}
+                                    className={cn(
+                                        'relative flex shrink-0 items-center gap-3 rounded-xl px-3.5 py-2.5 text-left transition-colors lg:w-full',
+                                        on ? (danger ? 'text-red-700' : 'text-green-800') : danger ? 'text-red-500 hover:bg-red-50' : 'text-zinc-600 hover:bg-zinc-100'
+                                    )}>
+                                    {on && (
+                                        <motion.span
+                                            layoutId='settings-active'
+                                            className={cn('absolute inset-0 rounded-xl', danger ? 'bg-red-50' : 'bg-green-50')}
+                                            transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                                        />
+                                    )}
+                                    <Icon className='relative h-[18px] w-[18px] shrink-0' />
+                                    <span className='relative'>
+                                        <span className='block text-sm font-medium'>{label}</span>
+                                        <span className='hidden text-xs font-normal opacity-70 lg:block'>{hint}</span>
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
-                )}
-            </Section>
+                </nav>
 
-            <Section title='Password' description='Changing it signs you out of your other devices.'>
-                <form onSubmit={changePassword} className='flex max-w-md flex-col gap-3'>
-                    <Input name='current' type='password' placeholder='Current password' autoComplete='current-password' required className='h-10' />
-                    <Input name='next' type='password' placeholder='New password (8+ characters)' minLength={8} autoComplete='new-password' required className='h-10' />
-                    <Button type='submit' disabled={busy === 'password'} className='w-fit'>
-                        {busy === 'password' && <Loader2 className='mr-2 h-4 w-4 animate-spin' />} Update password
-                    </Button>
-                </form>
-            </Section>
-
-            <Section title='Delete account' description='Permanently removes your account, documents, chats and API keys.'>
-                <Button variant='destructive' onClick={() => setConfirmDelete(true)}>Delete my account</Button>
-            </Section>
-
-            <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-                <DialogContent>
-                    <DialogTitle>Delete your account?</DialogTitle>
-                    <DialogDescription>This can&apos;t be undone. All your documents and chat history will be permanently deleted.</DialogDescription>
-                    <DialogFooter className='gap-2'>
-                        <Button variant='outline' onClick={() => setConfirmDelete(false)}>Cancel</Button>
-                        <Button variant='destructive' disabled={busy === 'delete'} onClick={deleteAccount}>
-                            {busy === 'delete' && <Loader2 className='mr-2 h-4 w-4 animate-spin' />} Delete account
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+                <div className='min-w-0'>
+                    <div className='mb-5'>
+                        <h2 className='text-xl font-semibold text-zinc-900'>{current.label}</h2>
+                        <p className='text-sm text-zinc-500'>{current.hint}</p>
+                    </div>
+                    <AnimatePresence mode='wait'>
+                        <motion.div
+                            key={active}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -4 }}
+                            transition={{ duration: 0.22, ease: EASE }}>
+                            {active === 'profile' && <ProfileSection user={user} />}
+                            {active === 'preferences' && <PreferencesSection />}
+                            {active === 'notifications' && <NotificationsSection />}
+                            {active === 'security' && <SecuritySection />}
+                            {active === 'data' && <DataSection />}
+                            {active === 'danger' && <DangerSection email={user.email} />}
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+            </div>
         </main>
     );
 }

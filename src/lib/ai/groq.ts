@@ -32,6 +32,7 @@ export const streamChat = async (
             stream: true,
             stream_options: { include_usage: true },
         }),
+        cache: 'no-store',
     });
     if (!res.ok || !res.body) throw new Error(`Groq request failed (${res.status}): ${await res.text()}`);
 
@@ -64,4 +65,31 @@ export const streamChat = async (
         }
     }
     return { text, usage };
+};
+
+// One-shot completion for background jobs (summaries etc.). Pass `json` to request a JSON object.
+export const completeChat = async (messages: ChatMessage[], opts: { json?: boolean } = {}): Promise<{ text: string; usage: TokenUsage }> => {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) throw new Error('GROQ_API_KEY is not set');
+
+    const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify({
+            model: MODEL,
+            messages,
+            temperature: 0.2,
+            ...(MODEL.startsWith('openai/gpt-oss') && { reasoning_effort: 'low' }),
+            ...(opts.json && { response_format: { type: 'json_object' } }),
+        }),
+        signal: AbortSignal.timeout(60_000),
+        cache: 'no-store',
+    });
+    if (!res.ok) throw new Error(`Groq request failed (${res.status}): ${await res.text()}`);
+
+    const json = await res.json();
+    return {
+        text: json.choices?.[0]?.message?.content ?? '',
+        usage: { inputTokens: json.usage?.prompt_tokens ?? 0, outputTokens: json.usage?.completion_tokens ?? 0 },
+    };
 };

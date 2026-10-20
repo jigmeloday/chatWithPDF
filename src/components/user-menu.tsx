@@ -1,8 +1,9 @@
 'use client';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { LayoutDashboard, LogOut, Settings } from 'lucide-react';
-import { authClient } from '@/lib/auth-client';
+import { LogOut } from 'lucide-react';
+import { NAV_GROUPS } from '@/config/nav';
+import { Avatar } from '@/components/settings/profile-section';
+import { useSignOut } from '@/hooks/use-sign-out';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,41 +16,33 @@ import {
 interface UserMenuProps {
     name: string;
     email: string;
+    image?: string | null;
 }
 
-function UserMenu({ name, email }: UserMenuProps) {
-    const router = useRouter();
-    const initial = (name || email).charAt(0).toUpperCase();
-
-    const signOut = async () => {
-        await authClient.signOut();
-        router.push('/');
-        router.refresh();
-    };
+function UserMenu({ name, email, image }: UserMenuProps) {
+    const signOut = useSignOut();
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger
                 aria-label='Account menu'
-                className='flex h-9 w-9 items-center justify-center rounded-full bg-green-600 text-sm font-semibold text-white outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-green-600'>
-                {initial}
+                className='rounded-full outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-green-600'>
+                <Avatar user={{ name, email, image: image ?? null }} size='h-9 w-9 text-sm' />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align='end' className='w-56'>
+            <DropdownMenuContent align='end' className='max-h-[80vh] w-56 overflow-y-auto'>
                 <DropdownMenuLabel className='flex flex-col'>
                     {name && <span className='truncate text-sm font-medium'>{name}</span>}
                     <span className='truncate text-xs font-normal text-zinc-500'>{email}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                    <Link href='/dashboard' className='cursor-pointer'>
-                        <LayoutDashboard className='mr-2 h-4 w-4' /> Overview
-                    </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                    <Link href='/settings' className='cursor-pointer'>
-                        <Settings className='mr-2 h-4 w-4' /> Settings
-                    </Link>
-                </DropdownMenuItem>
+                {NAV_GROUPS.flatMap((g) => g.items).map((item) => (
+                    <DropdownMenuItem key={item.href} asChild>
+                        <Link href={item.href} className='cursor-pointer'>
+                            <item.icon className='mr-2 h-4 w-4' /> {item.label}
+                        </Link>
+                    </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={signOut} className='cursor-pointer text-red-600 focus:text-red-600'>
                     <LogOut className='mr-2 h-4 w-4' /> Sign out
                 </DropdownMenuItem>

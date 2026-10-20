@@ -7,7 +7,7 @@ export const rateLimit = (key: string, limit: number, windowMs = 60_000) => {
 
     if (recent.length >= limit) {
         hits.set(key, recent);
-        return { ok: false, retryAfter: Math.ceil((windowMs - (now - recent[0])) / 1000) };
+        return { ok: false, retryAfter: Math.ceil((windowMs - (now - recent[0])) / 1000), remaining: 0 };
     }
     recent.push(now);
     hits.set(key, recent);
@@ -17,7 +17,7 @@ export const rateLimit = (key: string, limit: number, windowMs = 60_000) => {
         hits.forEach((v, k) => {
             if (!v.some((t) => now - t < windowMs)) hits.delete(k);
         });
-    return { ok: true, retryAfter: 0 };
+    return { ok: true, retryAfter: 0, remaining: limit - recent.length };
 };
 
 export const tooManyRequests = (retryAfter: number, json = false) =>

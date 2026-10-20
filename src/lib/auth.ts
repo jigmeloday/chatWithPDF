@@ -16,13 +16,13 @@ export const auth = betterAuth({
         // Only block unverified users when emails can actually be delivered.
         requireEmailVerification: emailEnabled,
         sendResetPassword: ({ user, url }) =>
-            actionEmail(user.email, 'Reset your DocuChatty password', 'We received a request to reset your password.', 'Reset password', url),
+            actionEmail(user.email, 'Reset your Otterly password', 'We received a request to reset your password.', 'Reset password', url),
     },
     emailVerification: {
         sendOnSignUp: emailEnabled,
         autoSignInAfterVerification: true,
         sendVerificationEmail: ({ user, url }) =>
-            actionEmail(user.email, 'Verify your DocuChatty email', 'Welcome to DocuChatty! Confirm your email address to get started.', 'Verify email', url),
+            actionEmail(user.email, 'Verify your Otterly email', 'Welcome to Otterly! Confirm your email address to get started.', 'Verify email', url),
     },
     user: {
         deleteUser: {
@@ -32,7 +32,7 @@ export const auth = betterAuth({
                 const files = await db.file.findMany({ where: { userId: user.id }, select: { key: true } });
                 await db.message.deleteMany({ where: { userId: user.id } });
                 await db.file.deleteMany({ where: { userId: user.id } });
-                await Promise.all(files.map((f) => storage.remove(f.key)));
+                await Promise.all([...files.map((f) => storage.remove(f.key)), storage.remove(`avatar_${user.id}`)]);
             },
         },
     },

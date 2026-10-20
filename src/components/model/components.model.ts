@@ -10,6 +10,7 @@ export interface MaxWidthProps{
 
 export interface PdfRendererProps {
     url: string
+    initialPage?: number
 }
 
 export interface PdfFullscreenProps {

@@ -6,17 +6,22 @@ import { useToast } from '@/hooks/use-toast';
 
 interface BillingButtonProps extends ButtonProps {
     action: 'checkout' | 'portal';
+    plan?: 'pro' | 'business';
 }
 
 // Sends the user to Stripe Checkout or the billing portal.
-function BillingButton({ action, children, ...props }: BillingButtonProps) {
+function BillingButton({ action, plan, children, ...props }: BillingButtonProps) {
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
 
     const go = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/stripe/${action}`, { method: 'POST' });
+            const res = await fetch(`/api/stripe/${action}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plan }),
+            });
             const body = await res.json();
             if (!res.ok || !body.url) throw new Error(body.error ?? 'Something went wrong');
             window.location.href = body.url;
